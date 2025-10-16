@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemilihan Gubernur Mahasiswa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .vote-animation {
+            animation: voteSuccess 0.6s ease-out;
+        }
+        @keyframes voteSuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .progress-bar {
+            transition: width 0.8s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-full font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-800 mb-2">🗳 Pemilihan Gubernur Mahasiswa</h1>
+            <p class="text-gray-600 text-lg">Politeknik LP3I 2025-2026</p>
+            <div class="mt-4 bg-white rounded-lg shadow-md p-4 inline-block">
+                <p class="text-sm text-gray-500">Total Suara: <span id="totalVotes" class="font-bold text-indigo-600">0</span></p>
+            </div>
+        </div>
+
+        <!-- Student Data Form -->
+        <div id="studentForm" class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">📝 Data Mahasiswa</h2>
+            <p class="text-center text-gray-600 mb-6">Silakan lengkapi data Anda sebelum memilih</p>
+            
+            <form id="dataForm" class="space-y-6">
+                <div>
+                    <label for="studentName" class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                    <input type="text" id="studentName" name="studentName" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                           placeholder="Masukkan nama lengkap Anda">
+                </div>
+                
+                <div>
+                    <label for="studentNIM" class="block text-sm font-medium text-gray-700 mb-2">NIM (Nomor Induk Mahasiswa)</label>
+                    <input type="text" id="studentNIM" name="studentNIM" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                           placeholder="Contoh: 2024001234">
+                </div>
+                
+                <div>
+                    <label for="studentProdi" class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
+                    <select id="studentProdi" name="studentProdi" required 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                        <option value="">Pilih Program Studi</option>
+                        <option value="BD">Bisnis Digital (BD)</option>
+                        <option value="AB">Administrasi Bisnis (AB)</option>
+                        <option value="MI">Manajemen Informatika (MI)</option>
+                        <option value="HUMAS">Hubungan Masyarakat (HUMAS)</option>
+                        <option value="AKUNTANSI">Akuntansi</option>
+                    </select>
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200">
+                        Lanjut ke Pemilihan 🗳
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Voting Section -->
+        <div id="votingSection" class="max-w-6xl mx-auto hidden">
+            <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Data Pemilih:</h3>
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    <p><strong>Nama:</strong> <span id="displayName" class="text-indigo-600"></span></p>
+                    <p><strong>NIM:</strong> <span id="displayNIM" class="text-indigo-600"></span></p>
+                    <p><strong>Prodi:</strong> <span id="displayProdi" class="text-indigo-600"></span></p>
+                </div>
+            </div>
+            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Pilih Calon Favorit Anda</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <!-- Candidate 1 -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="bg-gradient-to-r from-red-500 to-red-600 h-32 flex items-center justify-center">
+                        <div class="text-6xl">👨‍🎓</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Ahmad Rizki</h3>
+                        <p class="text-gray-600 mb-1"><strong>Fakultas:</strong> Teknik</p>
+                        <p class="text-gray-600 mb-3"><strong>Visi:</strong> "Mahasiswa Berdaya, Kampus Sejahtera"</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm text-gray-700">• Beasiswa untuk mahasiswa berprestasi</p>
+                            <p class="text-sm text-gray-700">• Fasilitas laboratorium modern</p>
+                            <p class="text-sm text-gray-700">• Program magang industri</p>
+                        </div>
+                        <button onclick="vote(1)" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+                            Pilih Ahmad Rizki
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Candidate 2 -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 h-32 flex items-center justify-center">
+                        <div class="text-6xl">👩‍🎓</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Sari Dewi</h3>
+                        <p class="text-gray-600 mb-1"><strong>Fakultas:</strong> Ekonomi</p>
+                        <p class="text-gray-600 mb-3"><strong>Visi:</strong> "Inovasi untuk Kemajuan Bersama"</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm text-gray-700">• Digitalisasi layanan mahasiswa</p>
+                            <p class="text-sm text-gray-700">• Kewirausahaan mahasiswa</p>
+                            <p class="text-sm text-gray-700">• Lingkungan kampus hijau</p>
+                        </div>
+                        <button onclick="vote(2)" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+                            Pilih Sari Dewi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Candidate 3 -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-32 flex items-center justify-center">
+                        <div class="text-6xl">👨‍💼</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Budi Santoso</h3>
+                        <p class="text-gray-600 mb-1"><strong>Fakultas:</strong> Hukum</p>
+                        <p class="text-gray-600 mb-3"><strong>Visi:</strong> "Suara Mahasiswa, Perubahan Nyata"</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-sm text-gray-700">• Transparansi organisasi mahasiswa</p>
+                            <p class="text-sm text-gray-700">• Kegiatan sosial kemasyarakatan</p>
+                            <p class="text-sm text-gray-700">• Advokasi hak mahasiswa</p>
+                        </div>
+                        <button onclick="vote(3)" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+                            Pilih Budi Santoso
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 hidden">
+            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">📊 Hasil Pemilihan</h2>
+            
+            <div class="space-y-6">
+                <!-- Result 1 -->
+                <div class="border-l-4 border-red-500 pl-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-semibold text-gray-800">Ahmad Rizki</h3>
+                        <span id="votes1" class="text-red-600 font-bold">0 suara (0%)</span>
+                    </div>
+                    <div class="bg-gray-200 rounded-full h-4">
+                        <div id="progress1" class="bg-red-500 h-4 rounded-full progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Result 2 -->
+                <div class="border-l-4 border-green-500 pl-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-semibold text-gray-800">Sari Dewi</h3>
+                        <span id="votes2" class="text-green-600 font-bold">0 suara (0%)</span>
+                    </div>
+                    <div class="bg-gray-200 rounded-full h-4">
+                        <div id="progress2" class="bg-green-500 h-4 rounded-full progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Result 3 -->
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-semibold text-gray-800">Budi Santoso</h3>
+                        <span id="votes3" class="text-blue-600 font-bold">0 suara (0%)</span>
+                    </div>
+                    <div class="bg-gray-200 rounded-full h-4">
+                        <div id="progress3" class="bg-blue-500 h-4 rounded-full progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <button onclick="resetVoting()" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 mr-4">
+                    🗑 Reset Semua Data
+                </button>
+                <button onclick="resetForNextVoter()" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                    👤 Pemilih Berikutnya
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 hidden">
+            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">🔐 Panel Admin</h2>
+            
+            <!-- Real-time Results -->
+            <div class="space-y-6 mb-8">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 Hasil Real-time</h3>
+                
+                <!-- Admin Result 1 -->
+                <div class="border-l-4 border-red-500 pl-4 bg-red-50 p-4 rounded-r-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-lg font-semibold text-gray-800">Ahmad Rizki</h4>
+                        <span id="adminVotes1" class="text-red-600 font-bold">0 suara (0%)</span>
+                    </div>
+                    <div class="bg-gray-200 rounded-full h-6">
+                        <div id="adminProgress1" class="bg-red-500 h-6 rounded-full progress-bar flex items-center justify-center text-white text-sm font-semibold" style="width: 0%">
+                            <span id="adminPercent1" class="hidden">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Result 2 -->
+                <div class="border-l-4 border-green-500 pl-4 bg-green-50 p-4 rounded-r-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-lg font-semibold text-gray-800">Sari Dewi</h4>
+                        <span id="adminVotes2" class="text-green-600 font-bold">0 suara (0%)</span>
+                    </div>
+                    <div class="bg-gray-200 rounded-full h-6">
+                        <div id="adminProgress2" class="bg-green-500 h-6 rounded-full progress-bar flex items-center justify-center text-white text-sm font-semibold" style="width: 0%">
+                            <span id="adminPercent2" class="hidden">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Result 3 -->
+                <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-lg font-semibold text-gray-800">Budi Santoso</h4>
+                        <span id="adminVotes3" class="text-blue-600 font-bold">0 suara (0%)</span>
+                    </div>
+                    <div class="bg-gray-200 rounded-full h-6">
+                        <div id="adminProgress3" class="bg-blue-500 h-6 rounded-full progress-bar flex items-center justify-center text-white text-sm font-semibold" style="width: 0%">
+                            <span id="adminPercent3" class="hidden">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Statistics -->
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-indigo-50 p-6 rounded-lg text-center">
+                    <h4 class="text-lg font-semibold text-indigo-800 mb-2">Total Pemilih</h4>
+                    <p id="adminTotalVotes" class="text-3xl font-bold text-indigo-600">0</p>
+                </div>
+                <div class="bg-yellow-50 p-6 rounded-lg text-center">
+                    <h4 class="text-lg font-semibold text-yellow-800 mb-2">Kandidat Terdepan</h4>
+                    <p id="adminLeader" class="text-xl font-bold text-yellow-600">-</p>
+                </div>
+                <div class="bg-purple-50 p-6 rounded-lg text-center">
+                    <h4 class="text-lg font-semibold text-purple-800 mb-2">Partisipasi</h4>
+                    <p id="adminParticipation" class="text-xl font-bold text-purple-600">Aktif</p>
+                </div>
+            </div>
+
+            <div class="text-center space-x-4">
+                <button onclick="refreshAdminData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                    🔄 Refresh Data
+                </button>
+                <button onclick="adminResetVoting()" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                    🗑 Reset Semua
+                </button>
+                <button onclick="exitAdmin()" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                    ❌ Keluar Admin
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin Login Button -->
+        <div class="fixed bottom-4 right-4">
+            <button onclick="showAdminLogin()" class="bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-full shadow-lg transition-colors duration-200" title="Admin Login">
+                🔐
+            </button>
+        </div>
+
+        <!-- Admin Login Modal -->
+        <div id="adminLoginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+                <h3 class="text-xl font-semibold text-center mb-6 text-gray-800">🔐 Login Admin</h3>
+                <form id="adminLoginForm" class="space-y-4">
+                    <div>
+                        <label for="adminPassword" class="block text-sm font-medium text-gray-700 mb-2">Password Admin</label>
+                        <input type="password" id="adminPassword" name="adminPassword" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                               placeholder="Masukkan password admin">
+                    </div>
+                    <div class="flex space-x-4">
+                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+                            Masuk
+                        </button>
+                        <button type="button" onclick="hideAdminLogin()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
+            <div class="flex items-center">
+                <span class="text-xl mr-2">✅</span>
+                <span>Suara Anda berhasil dicatat!</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let votes = [0, 0, 0]; // Votes for candidates 1, 2, 3
+        let hasVoted = false;
+        let studentData = {};
+        let isAdminLoggedIn = false;
+        const adminPassword = "panitia UKM 25";
+
+        // Handle student data form submission
+        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('studentName').value.trim();
+            const nim = document.getElementById('studentNIM').value.trim();
+            const prodi = document.getElementById('studentProdi').value;
+            
+            if (!name || !nim || !prodi) {
+                showMessage("Mohon lengkapi semua data!", "warning");
+                return;
+            }
+            
+            // Store student data
+            studentData = { name, nim, prodi };
+            
+            // Display student data
+            document.getElementById('displayName').textContent = name;
+            document.getElementById('displayNIM').textContent = nim;
+            document.getElementById('displayProdi').textContent = prodi;
+            
+            // Hide form and show voting section
+            document.getElementById('studentForm').style.display = 'none';
+            document.getElementById('votingSection').classList.remove('hidden');
+            
+            showMessage("Data berhasil disimpan! Silakan pilih calon Anda.", "success");
+        });
+
+        function vote(candidateId) {
+            if (hasVoted) {
+                showMessage("Anda sudah memberikan suara!", "warning");
+                return;
+            }
+
+            // Add vote
+            votes[candidateId - 1]++;
+            hasVoted = true;
+
+            // Update admin panel if logged in
+            if (isAdminLoggedIn) {
+                updateAdminResults();
+            }
+
+            // Show success animation
+            showSuccessMessage();
+            
+            // After voting, return to first page for next voter
+            setTimeout(() => {
+                resetForNextVoter();
+                showMessage("Terima kasih! Sistem siap untuk pemilih berikutnya.", "success");
+            }, 2000);
+        }
+
+        function updateResults() {
+            const total = votes.reduce((sum, vote) => sum + vote, 0);
+            document.getElementById('totalVotes').textContent = total;
+
+            for (let i = 0; i < 3; i++) {
+                const percentage = total > 0 ? Math.round((votes[i] / total) * 100) : 0;
+                document.getElementById(votes${i + 1}).textContent = ${votes[i]} suara (${percentage}%);
+                document.getElementById(progress${i + 1}).style.width = ${percentage}%;
+            }
+        }
+
+        function resetForNextVoter() {
+            // Only reset voter data, keep vote counts
+            hasVoted = false;
+            studentData = {};
+            
+            // Reset form
+            document.getElementById('dataForm').reset();
+            
+            // Show form, hide other sections
+            document.getElementById('studentForm').style.display = 'block';
+            document.getElementById('votingSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            
+            // Update total votes display
+            updateTotalVotesDisplay();
+        }
+
+        function resetVoting() {
+            votes = [0, 0, 0];
+            hasVoted = false;
+            studentData = {};
+            
+            // Reset form
+            document.getElementById('dataForm').reset();
+            
+            // Show form, hide other sections
+            document.getElementById('studentForm').style.display = 'block';
+            document.getElementById('votingSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('totalVotes').textContent = '0';
+        }
+
+        function updateTotalVotesDisplay() {
+            const total = votes.reduce((sum, vote) => sum + vote, 0);
+            document.getElementById('totalVotes').textContent = total;
+        }
+
+        function showSuccessMessage() {
+            const message = document.getElementById('successMessage');
+            message.classList.remove('hidden');
+            
+            setTimeout(() => {
+                message.classList.add('hidden');
+            }, 3000);
+        }
+
+        function showMessage(text, type) {
+            const message = document.createElement('div');
+            message.className = fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white ${type === 'warning' ? 'bg-yellow-500' : 'bg-green-500'};
+            message.innerHTML = `
+                <div class="flex items-center">
+                    <span class="text-xl mr-2">${type === 'warning' ? '⚠' : '✅'}</span>
+                    <span>${text}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                if (document.body.contains(message)) {
+                    document.body.removeChild(message);
+                }
+            }, 3000);
+        }
+
+        // Admin Functions
+        function showAdminLogin() {
+            document.getElementById('adminLoginModal').classList.remove('hidden');
+        }
+
+        function hideAdminLogin() {
+            document.getElementById('adminLoginModal').classList.add('hidden');
+            document.getElementById('adminPassword').value = '';
+        }
+
+        // Handle admin login
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === adminPassword) {
+                isAdminLoggedIn = true;
+                hideAdminLogin();
+                showAdminPanel();
+                showMessage("Login admin berhasil!", "success");
+            } else {
+                showMessage("Password admin salah!", "warning");
+            }
+        });
+
+        function showAdminPanel() {
+            // Hide all other sections
+            document.getElementById('studentForm').style.display = 'none';
+            document.getElementById('votingSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+            
+            // Show admin panel
+            document.getElementById('adminPanel').classList.remove('hidden');
+            
+            // Update admin results
+            updateAdminResults();
+        }
+
+        function updateAdminResults() {
+            const total = votes.reduce((sum, vote) => sum + vote, 0);
+            const candidates = ['Ahmad Rizki', 'Sari Dewi', 'Budi Santoso'];
+            
+            // Update total votes
+            document.getElementById('adminTotalVotes').textContent = total;
+            
+            // Find leader
+            let maxVotes = Math.max(...votes);
+            let leaderIndex = votes.indexOf(maxVotes);
+            let leader = total > 0 ? candidates[leaderIndex] : '-';
+            document.getElementById('adminLeader').textContent = leader;
+            
+            // Update each candidate's results
+            for (let i = 0; i < 3; i++) {
+                const percentage = total > 0 ? Math.round((votes[i] / total) * 100) : 0;
+                
+                document.getElementById(adminVotes${i + 1}).textContent = ${votes[i]} suara (${percentage}%);
+                document.getElementById(adminProgress${i + 1}).style.width = ${percentage}%;
+                
+                // Show percentage in progress bar if > 10%
+                const percentSpan = document.getElementById(adminPercent${i + 1});
+                if (percentage > 10) {
+                    percentSpan.textContent = ${percentage}%;
+                    percentSpan.classList.remove('hidden');
+                } else {
+                    percentSpan.classList.add('hidden');
+                }
+            }
+        }
+
+        function refreshAdminData() {
+            updateAdminResults();
+            showMessage("Data berhasil direfresh!", "success");
+        }
+
+        function adminResetVoting() {
+            // Create confirmation dialog
+            const confirmDiv = document.createElement('div');
+            confirmDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            confirmDiv.innerHTML = `
+                <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+                    <h3 class="text-xl font-semibold text-center mb-4 text-gray-800">⚠ Konfirmasi Reset</h3>
+                    <p class="text-center text-gray-600 mb-6">Apakah Anda yakin ingin menghapus semua data pemilihan? Tindakan ini tidak dapat dibatalkan.</p>
+                    <div class="flex space-x-4">
+                        <button onclick="confirmAdminReset()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+                            Ya, Reset
+                        </button>
+                        <button onclick="cancelAdminReset()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmDiv);
+            window.currentConfirmDiv = confirmDiv;
+        }
+
+        function confirmAdminReset() {
+            resetVoting();
+            updateAdminResults();
+            document.body.removeChild(window.currentConfirmDiv);
+            showMessage("Semua data pemilihan berhasil direset!", "success");
+        }
+
+        function cancelAdminReset() {
+            document.body.removeChild(window.currentConfirmDiv);
+        }
+
+        function exitAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('adminPanel').classList.add('hidden');
+            
+            // Show appropriate section based on current state
+            if (hasVoted) {
+                document.getElementById('resultsSection').classList.remove('hidden');
+            } else if (studentData.name) {
+                document.getElementById('votingSection').classList.remove('hidden');
+            } else {
+                document.getElementById('studentForm').style.display = 'block';
+            }
+            
+            showMessage("Keluar dari panel admin", "success");
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f1b76e83d14ac1',t:'MTc2MDU1NjQ3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
