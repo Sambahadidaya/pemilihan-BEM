@@ -1,580 +1,880 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pemilihan Gubernur Mahasiswa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
+                body {
             box-sizing: border-box;
         }
-        .vote-animation {
-            animation: voteSuccess 0.6s ease-out;
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        @keyframes voteSuccess {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .vote-card {
+            transition: all 0.3s ease;
+        }
+
+        .vote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
         .progress-bar {
-            transition: width 0.8s ease-out;
+            transition: width 0.5s ease-in-out;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-full font-sans">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-indigo-800 mb-2">🗳 Pemilihan Gubernur Mahasiswa</h1>
-            <p class="text-gray-600 text-lg">Politeknik LP3I 2025-2026</p>
-            <div class="mt-4 bg-white rounded-lg shadow-md p-4 inline-block">
-                <p class="text-sm text-gray-500">Total Suara: <span id="totalVotes" class="font-bold text-indigo-600">0</span></p>
-            </div>
-        </div>
 
-        <!-- Student Data Form -->
-        <div id="studentForm" class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8 mb-8">
-            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">📝 Data Mahasiswa</h2>
-            <p class="text-center text-gray-600 mb-6">Silakan lengkapi data Anda sebelum memilih</p>
-            
-            <form id="dataForm" class="space-y-6">
+<body class="gradient-bg min-h-screen">
+    <!-- Login Form -->
+    <div id="loginForm" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl card-shadow p-8 w-full max-w-md animate-fade-in">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Pemilihan Gubernur Mahasiswa</h1>
+                <p class="text-gray-600">Masukkan data Anda untuk memulai voting</p>
+            </div>
+
+            <form id="voterForm" class="space-y-6">
                 <div>
-                    <label for="studentName" class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                    <input type="text" id="studentName" name="studentName" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                           placeholder="Masukkan nama lengkap Anda">
+                    <label for="nama" class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                    <input type="text" id="nama" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                 </div>
-                
+
                 <div>
-                    <label for="studentNIM" class="block text-sm font-medium text-gray-700 mb-2">NIM (Nomor Induk Mahasiswa)</label>
-                    <input type="text" id="studentNIM" name="studentNIM" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                           placeholder="Contoh: 2024001234">
+                    <label for="nim" class="block text-sm font-medium text-gray-700 mb-2">NIM</label>
+                    <input type="text" id="nim" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                 </div>
-                
+
                 <div>
-                    <label for="studentProdi" class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
-                    <select id="studentProdi" name="studentProdi" required 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                    <label for="prodi" class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
+                    <select id="prodi" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                         <option value="">Pilih Program Studi</option>
                         <option value="BD">Bisnis Digital (BD)</option>
                         <option value="AB">Administrasi Bisnis (AB)</option>
                         <option value="MI">Manajemen Informatika (MI)</option>
-                        <option value="HUMAS">Hubungan Masyarakat (HUMAS)</option>
                         <option value="AKUNTANSI">Akuntansi</option>
+                        <option value="HUMAS">Hubungan Masyarakat (HUMAS)</option>
                     </select>
                 </div>
-                
-                <div class="text-center">
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200">
-                        Lanjut ke Pemilihan 🗳
-                    </button>
-                </div>
+
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                    Masuk ke Voting
+                </button>
             </form>
-        </div>
 
-        <!-- Voting Section -->
-        <div id="votingSection" class="max-w-6xl mx-auto hidden">
-            <div class="bg-white rounded-lg shadow-md p-4 mb-6">
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">Data Pemilih:</h3>
-                <div class="grid md:grid-cols-3 gap-4 text-sm">
-                    <p><strong>Nama:</strong> <span id="displayName" class="text-indigo-600"></span></p>
-                    <p><strong>NIM:</strong> <span id="displayNIM" class="text-indigo-600"></span></p>
-                    <p><strong>Prodi:</strong> <span id="displayProdi" class="text-indigo-600"></span></p>
-                </div>
-            </div>
-            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">Pilih Calon Favorit Anda</h2>
-            
-            <div class="grid md:grid-cols-3 gap-6 mb-8">
-                <!-- Candidate 1 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    <div class="bg-gradient-to-r from-red-500 to-red-600 h-32 flex items-center justify-center">
-                        <div class="text-6xl">👨‍🎓</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Ahmad Rizki</h3>
-                        <p class="text-gray-600 mb-1"><strong>Fakultas:</strong> Teknik</p>
-                        <p class="text-gray-600 mb-3"><strong>Visi:</strong> "Mahasiswa Berdaya, Kampus Sejahtera"</p>
-                        <div class="space-y-2 mb-4">
-                            <p class="text-sm text-gray-700">• Beasiswa untuk mahasiswa berprestasi</p>
-                            <p class="text-sm text-gray-700">• Fasilitas laboratorium modern</p>
-                            <p class="text-sm text-gray-700">• Program magang industri</p>
-                        </div>
-                        <button onclick="vote(1)" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
-                            Pilih Ahmad Rizki
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Candidate 2 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    <div class="bg-gradient-to-r from-green-500 to-green-600 h-32 flex items-center justify-center">
-                        <div class="text-6xl">👩‍🎓</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Sari Dewi</h3>
-                        <p class="text-gray-600 mb-1"><strong>Fakultas:</strong> Ekonomi</p>
-                        <p class="text-gray-600 mb-3"><strong>Visi:</strong> "Inovasi untuk Kemajuan Bersama"</p>
-                        <div class="space-y-2 mb-4">
-                            <p class="text-sm text-gray-700">• Digitalisasi layanan mahasiswa</p>
-                            <p class="text-sm text-gray-700">• Kewirausahaan mahasiswa</p>
-                            <p class="text-sm text-gray-700">• Lingkungan kampus hijau</p>
-                        </div>
-                        <button onclick="vote(2)" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
-                            Pilih Sari Dewi
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Candidate 3 -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-32 flex items-center justify-center">
-                        <div class="text-6xl">👨‍💼</div>
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">Budi Santoso</h3>
-                        <p class="text-gray-600 mb-1"><strong>Fakultas:</strong> Hukum</p>
-                        <p class="text-gray-600 mb-3"><strong>Visi:</strong> "Suara Mahasiswa, Perubahan Nyata"</p>
-                        <div class="space-y-2 mb-4">
-                            <p class="text-sm text-gray-700">• Transparansi organisasi mahasiswa</p>
-                            <p class="text-sm text-gray-700">• Kegiatan sosial kemasyarakatan</p>
-                            <p class="text-sm text-gray-700">• Advokasi hak mahasiswa</p>
-                        </div>
-                        <button onclick="vote(3)" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
-                            Pilih Budi Santoso
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Results Section -->
-        <div id="resultsSection" class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 hidden">
-            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">📊 Hasil Pemilihan</h2>
-            
-            <div class="space-y-6">
-                <!-- Result 1 -->
-                <div class="border-l-4 border-red-500 pl-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-semibold text-gray-800">Ahmad Rizki</h3>
-                        <span id="votes1" class="text-red-600 font-bold">0 suara (0%)</span>
-                    </div>
-                    <div class="bg-gray-200 rounded-full h-4">
-                        <div id="progress1" class="bg-red-500 h-4 rounded-full progress-bar" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <!-- Result 2 -->
-                <div class="border-l-4 border-green-500 pl-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-semibold text-gray-800">Sari Dewi</h3>
-                        <span id="votes2" class="text-green-600 font-bold">0 suara (0%)</span>
-                    </div>
-                    <div class="bg-gray-200 rounded-full h-4">
-                        <div id="progress2" class="bg-green-500 h-4 rounded-full progress-bar" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <!-- Result 3 -->
-                <div class="border-l-4 border-blue-500 pl-4">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-lg font-semibold text-gray-800">Budi Santoso</h3>
-                        <span id="votes3" class="text-blue-600 font-bold">0 suara (0%)</span>
-                    </div>
-                    <div class="bg-gray-200 rounded-full h-4">
-                        <div id="progress3" class="bg-blue-500 h-4 rounded-full progress-bar" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center mt-8">
-                <button onclick="resetVoting()" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 mr-4">
-                    🗑 Reset Semua Data
+            <div class="mt-6 text-center">
+                <button id="adminBtn" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                    Login Admin
                 </button>
-                <button onclick="resetForNextVoter()" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-                    👤 Pemilih Berikutnya
-                </button>
-            </div>
-        </div>
-
-        <!-- Admin Panel -->
-        <div id="adminPanel" class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 hidden">
-            <h2 class="text-2xl font-semibold text-center mb-6 text-gray-800">🔐 Panel Admin</h2>
-            
-            <!-- Real-time Results -->
-            <div class="space-y-6 mb-8">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4">📊 Hasil Real-time</h3>
-                
-                <!-- Admin Result 1 -->
-                <div class="border-l-4 border-red-500 pl-4 bg-red-50 p-4 rounded-r-lg">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-lg font-semibold text-gray-800">Ahmad Rizki</h4>
-                        <span id="adminVotes1" class="text-red-600 font-bold">0 suara (0%)</span>
-                    </div>
-                    <div class="bg-gray-200 rounded-full h-6">
-                        <div id="adminProgress1" class="bg-red-500 h-6 rounded-full progress-bar flex items-center justify-center text-white text-sm font-semibold" style="width: 0%">
-                            <span id="adminPercent1" class="hidden">0%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Admin Result 2 -->
-                <div class="border-l-4 border-green-500 pl-4 bg-green-50 p-4 rounded-r-lg">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-lg font-semibold text-gray-800">Sari Dewi</h4>
-                        <span id="adminVotes2" class="text-green-600 font-bold">0 suara (0%)</span>
-                    </div>
-                    <div class="bg-gray-200 rounded-full h-6">
-                        <div id="adminProgress2" class="bg-green-500 h-6 rounded-full progress-bar flex items-center justify-center text-white text-sm font-semibold" style="width: 0%">
-                            <span id="adminPercent2" class="hidden">0%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Admin Result 3 -->
-                <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-lg font-semibold text-gray-800">Budi Santoso</h4>
-                        <span id="adminVotes3" class="text-blue-600 font-bold">0 suara (0%)</span>
-                    </div>
-                    <div class="bg-gray-200 rounded-full h-6">
-                        <div id="adminProgress3" class="bg-blue-500 h-6 rounded-full progress-bar flex items-center justify-center text-white text-sm font-semibold" style="width: 0%">
-                            <span id="adminPercent3" class="hidden">0%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Admin Statistics -->
-            <div class="grid md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-indigo-50 p-6 rounded-lg text-center">
-                    <h4 class="text-lg font-semibold text-indigo-800 mb-2">Total Pemilih</h4>
-                    <p id="adminTotalVotes" class="text-3xl font-bold text-indigo-600">0</p>
-                </div>
-                <div class="bg-yellow-50 p-6 rounded-lg text-center">
-                    <h4 class="text-lg font-semibold text-yellow-800 mb-2">Kandidat Terdepan</h4>
-                    <p id="adminLeader" class="text-xl font-bold text-yellow-600">-</p>
-                </div>
-                <div class="bg-purple-50 p-6 rounded-lg text-center">
-                    <h4 class="text-lg font-semibold text-purple-800 mb-2">Partisipasi</h4>
-                    <p id="adminParticipation" class="text-xl font-bold text-purple-600">Aktif</p>
-                </div>
-            </div>
-
-            <div class="text-center space-x-4">
-                <button onclick="refreshAdminData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-                    🔄 Refresh Data
-                </button>
-                <button onclick="adminResetVoting()" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-                    🗑 Reset Semua
-                </button>
-                <button onclick="exitAdmin()" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-                    ❌ Keluar Admin
-                </button>
-            </div>
-        </div>
-
-        <!-- Admin Login Button -->
-        <div class="fixed bottom-4 right-4">
-            <button onclick="showAdminLogin()" class="bg-gray-800 hover:bg-gray-900 text-white p-3 rounded-full shadow-lg transition-colors duration-200" title="Admin Login">
-                🔐
-            </button>
-        </div>
-
-        <!-- Admin Login Modal -->
-        <div id="adminLoginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-            <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
-                <h3 class="text-xl font-semibold text-center mb-6 text-gray-800">🔐 Login Admin</h3>
-                <form id="adminLoginForm" class="space-y-4">
-                    <div>
-                        <label for="adminPassword" class="block text-sm font-medium text-gray-700 mb-2">Password Admin</label>
-                        <input type="password" id="adminPassword" name="adminPassword" required 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                               placeholder="Masukkan password admin">
-                    </div>
-                    <div class="flex space-x-4">
-                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
-                            Masuk
-                        </button>
-                        <button type="button" onclick="hideAdminLogin()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
-                            Batal
-                        </button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-
-        <!-- Success Message -->
-        <div id="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
-            <div class="flex items-center">
-                <span class="text-xl mr-2">✅</span>
-                <span>Suara Anda berhasil dicatat!</span>
             </div>
         </div>
     </div>
 
-    <script>
-        let votes = [0, 0, 0]; // Votes for candidates 1, 2, 3
-        let hasVoted = false;
-        let studentData = {};
-        let isAdminLoggedIn = false;
-        const adminPassword = "panitia UKM 25";
+    <!-- Admin Login -->
+    <div id="adminLogin" class="min-h-screen flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl card-shadow p-8 w-full max-w-md animate-fade-in">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Login Admin</h1>
+                <p class="text-gray-600">Masukkan password admin</p>
+            </div>
 
-        // Handle student data form submission
-        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            <form id="adminForm" class="space-y-6">
+                <div>
+                    <label for="adminPassword" class="block text-sm font-medium text-gray-700 mb-2">Password
+                        Admin</label>
+                    <input type="password" id="adminPassword" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                    Login Admin
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <button id="backToVoter" class="text-sm text-gray-500 hover:text-gray-700 underline">
+                    Kembali ke Login Mahasiswa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voting Page -->
+    <div id="votingPage" class="min-h-screen p-4 hidden">
+        <header class="bg-white rounded-2xl card-shadow p-6 mb-8 animate-fade-in">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Pemilihan Gubernur Mahasiswa</h1>
+                    <p class="text-gray-600 mt-2">Selamat datang, <span id="voterName" class="font-semibold"></span></p>
+                </div>
+                <button id="logoutBtn"
+                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    Logout
+                </button>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Candidate 1 -->
+                <div class="bg-white rounded-2xl card-shadow p-6 vote-card animate-fade-in">
+                    <div class="text-center mb-6">
+                        <div
+                            class="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
+                            <span class="text-4xl text-white font-bold">AR</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Ahmad Rizki</h3>
+                        <p class="text-gray-600">Calon No. 1</p>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            Meningkatkan fasilitas kampus
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            Program beasiswa mahasiswa
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            Kegiatan ekstrakurikuler
+                        </div>
+                    </div>
+
+                    <button onclick="vote(1)"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                        Pilih Calon Ini
+                    </button>
+                </div>
+
+                <!-- Candidate 2 -->
+                <div class="bg-white rounded-2xl card-shadow p-6 vote-card animate-fade-in">
+                    <div class="text-center mb-6">
+                        <div
+                            class="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+                            <span class="text-4xl text-white font-bold">SP</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Sari Putri</h3>
+                        <p class="text-gray-600">Calon No. 2</p>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            Digitalisasi layanan mahasiswa
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            Program magang industri
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            Kewirausahaan mahasiswa
+                        </div>
+                    </div>
+
+                    <button onclick="vote(2)"
+                        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                        Pilih Calon Ini
+                    </button>
+                </div>
+
+                <!-- Candidate 3 -->
+                <div class="bg-white rounded-2xl card-shadow p-6 vote-card animate-fade-in">
+                    <div class="text-center mb-6">
+                        <div
+                            class="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center">
+                            <span class="text-4xl text-white font-bold">DM</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Doni Mahendra</h3>
+                        <p class="text-gray-600">Calon No. 3</p>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                            Kesejahteraan mahasiswa
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                            Organisasi kemahasiswaan
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                            Kompetisi akademik
+                        </div>
+                    </div>
+
+                    <button onclick="vote(3)"
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                        Pilih Calon Ini
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Vote Confirmation -->
+    <div id="voteConfirmation" class="min-h-screen flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl card-shadow p-8 w-full max-w-md animate-fade-in text-center">
+            <div class="w-20 h-20 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
+                <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Suara Berhasil Disimpan!</h2>
+            <p class="text-gray-600 mb-6">Terima kasih telah berpartisipasi dalam pemilihan gubernur mahasiswa.</p>
+            <p class="text-sm text-gray-500 mb-8">Anda telah memilih: <span id="selectedCandidate"
+                    class="font-semibold"></span></p>
+
+            <button onclick="showResults()"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 mb-4">
+                Lihat Hasil Sementara
+            </button>
+
+            <button onclick="logout()"
+                class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                Keluar
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="resultsPage" class="min-h-screen p-4 hidden">
+        <header class="bg-white rounded-2xl card-shadow p-6 mb-8 animate-fade-in">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Hasil Pemilihan</h1>
+                    <p class="text-gray-600 mt-2">Hasil sementara pemilihan gubernur mahasiswa</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="showVoting()"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Kembali ke Voting
+                    </button>
+                    <button onclick="logout()"
+                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl card-shadow p-8 animate-fade-in">
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-gray-800">Perolehan Suara</h2>
+                        <div class="text-sm text-gray-600">
+                            Total Suara: <span id="totalVotes" class="font-semibold">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Candidate 1 Results -->
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div
+                                    class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-lg text-white font-bold">AR</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">Ahmad Rizki</h3>
+                                    <p class="text-sm text-gray-600">Calon No. 1</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-blue-600" id="votes1">0</div>
+                                <div class="text-sm text-gray-600" id="percentage1">0%</div>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-blue-600 h-3 rounded-full progress-bar" id="progress1" style="width: 0%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Candidate 2 Results -->
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div
+                                    class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-lg text-white font-bold">SP</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">Sari Putri</h3>
+                                    <p class="text-sm text-gray-600">Calon No. 2</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-green-600" id="votes2">0</div>
+                                <div class="text-sm text-gray-600" id="percentage2">0%</div>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-green-600 h-3 rounded-full progress-bar" id="progress2" style="width: 0%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Candidate 3 Results -->
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <div
+                                    class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-lg text-white font-bold">DM</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-gray-800">Doni Mahendra</h3>
+                                    <p class="text-sm text-gray-600">Calon No. 3</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-purple-600" id="votes3">0</div>
+                                <div class="text-sm text-gray-600" id="percentage3">0%</div>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-purple-600 h-3 rounded-full progress-bar" id="progress3" style="width: 0%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="updateResults()"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+                        Refresh Hasil
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="min-h-screen p-4 hidden">
+        <header class="bg-white rounded-2xl card-shadow p-6 mb-8 animate-fade-in">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Dashboard Admin</h1>
+                    <p class="text-gray-600 mt-2">Kelola pemilihan gubernur mahasiswa</p>
+                </div>
+                <button onclick="logout()"
+                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    Logout
+                </button>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- Statistics -->
+                <div class="bg-white rounded-2xl card-shadow p-6 animate-fade-in">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Statistik Pemilihan</h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Pemilih:</span>
+                            <span class="font-semibold" id="adminTotalVotes">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Ahmad Rizki:</span>
+                            <span class="font-semibold text-blue-600" id="adminVotes1">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Sari Putri:</span>
+                            <span class="font-semibold text-green-600" id="adminVotes2">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Doni Mahendra:</span>
+                            <span class="font-semibold text-purple-600" id="adminVotes3">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="bg-white rounded-2xl card-shadow p-6 animate-fade-in">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Aksi Admin</h2>
+                    <div class="space-y-4">
+                        <button onclick="resetVotes()"
+                            class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            Reset Semua Suara
+                        </button>
+                        <button onclick="exportResults()"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            Export Hasil
+                        </button>
+                        <button onclick="showResults()"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            Lihat Hasil Detail
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voter List -->
+            <div class="bg-white rounded-2xl card-shadow p-6 animate-fade-in">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Daftar Pemilih</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4">No</th>
+                                <th class="text-left py-3 px-4">Nama</th>
+                                <th class="text-left py-3 px-4">NIM</th>
+                                <th class="text-left py-3 px-4">Program Studi</th>
+                                <th class="text-left py-3 px-4">Pilihan</th>
+                                <th class="text-left py-3 px-4">Waktu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="voterList">
+                            <!-- Voter data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Data storage
+        let votes = {
+            1: 0, // Ahmad Rizki
+            2: 0, // Sari Putri  
+            3: 0  // Doni Mahendra
+        };
+
+        let voters = [];
+        let currentUser = null;
+        let hasVoted = false;
+
+        const candidates = {
+            1: 'Ahmad Rizki',
+            2: 'Sari Putri',
+            3: 'Doni Mahendra'
+        };
+
+        // Initialize data from localStorage
+        function initializeData() {
+            const savedVotes = localStorage.getItem('electionVotes');
+            const savedVoters = localStorage.getItem('electionVoters');
+
+            if (savedVotes) {
+                votes = JSON.parse(savedVotes);
+            }
+
+            if (savedVoters) {
+                voters = JSON.parse(savedVoters);
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('electionVotes', JSON.stringify(votes));
+            localStorage.setItem('electionVoters', JSON.stringify(voters));
+        }
+
+        // Show specific page
+        function showPage(pageId) {
+            const pages = ['loginForm', 'adminLogin', 'votingPage', 'voteConfirmation', 'resultsPage', 'adminDashboard'];
+            pages.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
+        // Voter form submission
+        document.getElementById('voterForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            
-            const name = document.getElementById('studentName').value.trim();
-            const nim = document.getElementById('studentNIM').value.trim();
-            const prodi = document.getElementById('studentProdi').value;
-            
-            if (!name || !nim || !prodi) {
-                showMessage("Mohon lengkapi semua data!", "warning");
+
+            const nama = document.getElementById('nama').value.trim();
+            const nim = document.getElementById('nim').value.trim();
+            const prodi = document.getElementById('prodi').value;
+
+            if (!nama || !nim || !prodi) {
+                showMessage('Mohon lengkapi semua data!', 'error');
                 return;
             }
-            
-            // Store student data
-            studentData = { name, nim, prodi };
-            
-            // Display student data
-            document.getElementById('displayName').textContent = name;
-            document.getElementById('displayNIM').textContent = nim;
-            document.getElementById('displayProdi').textContent = prodi;
-            
-            // Hide form and show voting section
-            document.getElementById('studentForm').style.display = 'none';
-            document.getElementById('votingSection').classList.remove('hidden');
-            
-            showMessage("Data berhasil disimpan! Silakan pilih calon Anda.", "success");
+
+            // Check if NIM already voted
+            const existingVoter = voters.find(voter => voter.nim === nim);
+            if (existingVoter) {
+                showMessage('NIM ini sudah pernah melakukan voting!', 'error');
+                return;
+            }
+
+            currentUser = { nama, nim, prodi };
+            document.getElementById('voterName').textContent = nama;
+            showPage('votingPage');
         });
 
+        // Admin login
+        document.getElementById('adminForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const password = document.getElementById('adminPassword').value;
+
+            if (password === 'panitia25') {
+                updateAdminDashboard();
+                showPage('adminDashboard');
+            } else {
+                showMessage('Password admin salah!', 'error');
+            }
+        });
+
+        // Vote function
         function vote(candidateId) {
             if (hasVoted) {
-                showMessage("Anda sudah memberikan suara!", "warning");
+                showMessage('Anda sudah melakukan voting!', 'error');
                 return;
             }
 
-            // Add vote
-            votes[candidateId - 1]++;
-            hasVoted = true;
-
-            // Update admin panel if logged in
-            if (isAdminLoggedIn) {
-                updateAdminResults();
-            }
-
-            // Show success animation
-            showSuccessMessage();
-            
-            // After voting, return to first page for next voter
-            setTimeout(() => {
-                resetForNextVoter();
-                showMessage("Terima kasih! Sistem siap untuk pemilih berikutnya.", "success");
-            }, 2000);
+            // Show inline confirmation
+            const candidateName = candidates[candidateId];
+            showVoteConfirmation(candidateId, candidateName);
         }
 
-        function updateResults() {
-            const total = votes.reduce((sum, vote) => sum + vote, 0);
-            document.getElementById('totalVotes').textContent = total;
-
-            for (let i = 0; i < 3; i++) {
-                const percentage = total > 0 ? Math.round((votes[i] / total) * 100) : 0;
-                document.getElementById(votes${i + 1}).textContent = ${votes[i]} suara (${percentage}%);
-                document.getElementById(progress${i + 1}).style.width = ${percentage}%;
-            }
-        }
-
-        function resetForNextVoter() {
-            // Only reset voter data, keep vote counts
-            hasVoted = false;
-            studentData = {};
-            
-            // Reset form
-            document.getElementById('dataForm').reset();
-            
-            // Show form, hide other sections
-            document.getElementById('studentForm').style.display = 'block';
-            document.getElementById('votingSection').classList.add('hidden');
-            document.getElementById('resultsSection').classList.add('hidden');
-            
-            // Update total votes display
-            updateTotalVotesDisplay();
-        }
-
-        function resetVoting() {
-            votes = [0, 0, 0];
-            hasVoted = false;
-            studentData = {};
-            
-            // Reset form
-            document.getElementById('dataForm').reset();
-            
-            // Show form, hide other sections
-            document.getElementById('studentForm').style.display = 'block';
-            document.getElementById('votingSection').classList.add('hidden');
-            document.getElementById('resultsSection').classList.add('hidden');
-            document.getElementById('totalVotes').textContent = '0';
-        }
-
-        function updateTotalVotesDisplay() {
-            const total = votes.reduce((sum, vote) => sum + vote, 0);
-            document.getElementById('totalVotes').textContent = total;
-        }
-
-        function showSuccessMessage() {
-            const message = document.getElementById('successMessage');
-            message.classList.remove('hidden');
-            
-            setTimeout(() => {
-                message.classList.add('hidden');
-            }, 3000);
-        }
-
-        function showMessage(text, type) {
-            const message = document.createElement('div');
-            message.className = fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white ${type === 'warning' ? 'bg-yellow-500' : 'bg-green-500'};
-            message.innerHTML = `
-                <div class="flex items-center">
-                    <span class="text-xl mr-2">${type === 'warning' ? '⚠' : '✅'}</span>
-                    <span>${text}</span>
-                </div>
-            `;
-            
-            document.body.appendChild(message);
-            
-            setTimeout(() => {
-                if (document.body.contains(message)) {
-                    document.body.removeChild(message);
-                }
-            }, 3000);
-        }
-
-        // Admin Functions
-        function showAdminLogin() {
-            document.getElementById('adminLoginModal').classList.remove('hidden');
-        }
-
-        function hideAdminLogin() {
-            document.getElementById('adminLoginModal').classList.add('hidden');
-            document.getElementById('adminPassword').value = '';
-        }
-
-        // Handle admin login
-        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const password = document.getElementById('adminPassword').value;
-            
-            if (password === adminPassword) {
-                isAdminLoggedIn = true;
-                hideAdminLogin();
-                showAdminPanel();
-                showMessage("Login admin berhasil!", "success");
-            } else {
-                showMessage("Password admin salah!", "warning");
-            }
-        });
-
-        function showAdminPanel() {
-            // Hide all other sections
-            document.getElementById('studentForm').style.display = 'none';
-            document.getElementById('votingSection').classList.add('hidden');
-            document.getElementById('resultsSection').classList.add('hidden');
-            
-            // Show admin panel
-            document.getElementById('adminPanel').classList.remove('hidden');
-            
-            // Update admin results
-            updateAdminResults();
-        }
-
-        function updateAdminResults() {
-            const total = votes.reduce((sum, vote) => sum + vote, 0);
-            const candidates = ['Ahmad Rizki', 'Sari Dewi', 'Budi Santoso'];
-            
-            // Update total votes
-            document.getElementById('adminTotalVotes').textContent = total;
-            
-            // Find leader
-            let maxVotes = Math.max(...votes);
-            let leaderIndex = votes.indexOf(maxVotes);
-            let leader = total > 0 ? candidates[leaderIndex] : '-';
-            document.getElementById('adminLeader').textContent = leader;
-            
-            // Update each candidate's results
-            for (let i = 0; i < 3; i++) {
-                const percentage = total > 0 ? Math.round((votes[i] / total) * 100) : 0;
-                
-                document.getElementById(adminVotes${i + 1}).textContent = ${votes[i]} suara (${percentage}%);
-                document.getElementById(adminProgress${i + 1}).style.width = ${percentage}%;
-                
-                // Show percentage in progress bar if > 10%
-                const percentSpan = document.getElementById(adminPercent${i + 1});
-                if (percentage > 10) {
-                    percentSpan.textContent = ${percentage}%;
-                    percentSpan.classList.remove('hidden');
-                } else {
-                    percentSpan.classList.add('hidden');
-                }
-            }
-        }
-
-        function refreshAdminData() {
-            updateAdminResults();
-            showMessage("Data berhasil direfresh!", "success");
-        }
-
-        function adminResetVoting() {
-            // Create confirmation dialog
-            const confirmDiv = document.createElement('div');
-            confirmDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-            confirmDiv.innerHTML = `
-                <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
-                    <h3 class="text-xl font-semibold text-center mb-4 text-gray-800">⚠ Konfirmasi Reset</h3>
-                    <p class="text-center text-gray-600 mb-6">Apakah Anda yakin ingin menghapus semua data pemilihan? Tindakan ini tidak dapat dibatalkan.</p>
-                    <div class="flex space-x-4">
-                        <button onclick="confirmAdminReset()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
-                            Ya, Reset
+        // Show vote confirmation modal
+        function showVoteConfirmation(candidateId, candidateName) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-8 max-w-md mx-4 animate-fade-in">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Konfirmasi Pilihan</h3>
+                    <p class="text-gray-600 mb-6">Apakah Anda yakin memilih <strong>${candidateName}</strong>?</p>
+                    <div class="flex gap-4">
+                        <button onclick="confirmVote(${candidateId}, '${candidateName}')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            Ya, Pilih
                         </button>
-                        <button onclick="cancelAdminReset()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200">
+                        <button onclick="closeModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
                             Batal
                         </button>
                     </div>
                 </div>
             `;
-            document.body.appendChild(confirmDiv);
-            window.currentConfirmDiv = confirmDiv;
+            document.body.appendChild(modal);
+            window.currentModal = modal;
         }
 
-        function confirmAdminReset() {
-            resetVoting();
-            updateAdminResults();
-            document.body.removeChild(window.currentConfirmDiv);
-            showMessage("Semua data pemilihan berhasil direset!", "success");
+        // Confirm vote
+        function confirmVote(candidateId, candidateName) {
+            // Record vote
+            votes[candidateId]++;
+
+            // Record voter
+            const voter = {
+                ...currentUser,
+                choice: candidateId,
+                candidateName: candidateName,
+                timestamp: new Date().toLocaleString('id-ID')
+            };
+
+            voters.push(voter);
+            hasVoted = true;
+
+            // Save data
+            saveData();
+
+            // Close modal
+            closeModal();
+
+            // Show confirmation
+            document.getElementById('selectedCandidate').textContent = candidateName;
+            showPage('voteConfirmation');
         }
 
-        function cancelAdminReset() {
-            document.body.removeChild(window.currentConfirmDiv);
-        }
-
-        function exitAdmin() {
-            isAdminLoggedIn = false;
-            document.getElementById('adminPanel').classList.add('hidden');
-            
-            // Show appropriate section based on current state
-            if (hasVoted) {
-                document.getElementById('resultsSection').classList.remove('hidden');
-            } else if (studentData.name) {
-                document.getElementById('votingSection').classList.remove('hidden');
-            } else {
-                document.getElementById('studentForm').style.display = 'block';
+        // Close modal
+        function closeModal() {
+            if (window.currentModal) {
+                window.currentModal.remove();
+                window.currentModal = null;
             }
-            
-            showMessage("Keluar dari panel admin", "success");
         }
+
+        // Show results
+        function showResults() {
+            updateResults();
+            showPage('resultsPage');
+        }
+
+        // Update results display
+        function updateResults() {
+            const total = votes[1] + votes[2] + votes[3];
+            document.getElementById('totalVotes').textContent = total;
+
+            for (let i = 1; i <= 3; i++) {
+                const voteCount = votes[i];
+                const percentage = total > 0 ? Math.round((voteCount / total) * 100) : 0;
+
+                document.getElementById(`votes${i}`).textContent = voteCount;
+                document.getElementById(`percentage${i}`).textContent = `${percentage}%`;
+                document.getElementById(`progress${i}`).style.width = `${percentage}%`;
+            }
+        }
+
+        // Update admin dashboard
+        function updateAdminDashboard() {
+            const total = votes[1] + votes[2] + votes[3];
+            document.getElementById('adminTotalVotes').textContent = total;
+            document.getElementById('adminVotes1').textContent = votes[1];
+            document.getElementById('adminVotes2').textContent = votes[2];
+            document.getElementById('adminVotes3').textContent = votes[3];
+
+            // Update voter list
+            const voterList = document.getElementById('voterList');
+            voterList.innerHTML = '';
+
+            voters.forEach((voter, index) => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-100';
+                row.innerHTML = `
+                    <td class="py-3 px-4">${index + 1}</td>
+                    <td class="py-3 px-4">${voter.nama}</td>
+                    <td class="py-3 px-4">${voter.nim}</td>
+                    <td class="py-3 px-4">${voter.prodi}</td>
+                    <td class="py-3 px-4">${voter.candidateName}</td>
+                    <td class="py-3 px-4">${voter.timestamp}</td>
+                `;
+                voterList.appendChild(row);
+            });
+        }
+
+        // Reset votes (admin only)
+        function resetVotes() {
+            showResetConfirmation();
+        }
+
+        // Show reset confirmation modal
+        function showResetConfirmation() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-8 max-w-md mx-4 animate-fade-in">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Hapus Semua Data</h3>
+                        <p class="text-gray-600">Apakah Anda yakin ingin menghapus semua data voting? Tindakan ini tidak dapat dibatalkan!</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <button onclick="confirmReset()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            Ya, Hapus
+                        </button>
+                        <button onclick="closeModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        // Confirm reset
+        function confirmReset() {
+            votes = { 1: 0, 2: 0, 3: 0 };
+            voters = [];
+            saveData();
+            updateAdminDashboard();
+            closeModal();
+            showMessage('Semua data voting berhasil dihapus!', 'success');
+        }
+
+        // Export results
+        function exportResults() {
+            const total = votes[1] + votes[2] + votes[3];
+            const results = `
+HASIL PEMILIHAN GUBERNUR MAHASISWA
+==================================
+
+Total Pemilih: ${total}
+
+Perolehan Suara:
+1. Ahmad Rizki: ${votes[1]} suara (${total > 0 ? Math.round((votes[1] / total) * 100) : 0}%)
+2. Sari Putri: ${votes[2]} suara (${total > 0 ? Math.round((votes[2] / total) * 100) : 0}%)
+3. Doni Mahendra: ${votes[3]} suara (${total > 0 ? Math.round((votes[3] / total) * 100) : 0}%)
+
+Daftar Pemilih:
+${voters.map((voter, index) =>
+                `${index + 1}. ${voter.nama} (${voter.nim}) - ${voter.prodi} - Memilih: ${voter.candidateName} - ${voter.timestamp}`
+            ).join('\n')}
+
+Diekspor pada: ${new Date().toLocaleString('id-ID')}
+            `;
+
+            const blob = new Blob([results], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `hasil-pemilihan-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showMessage('Hasil berhasil diekspor!', 'success');
+        }
+
+        // Show voting page
+        function showVoting() {
+            if (currentUser) {
+                showPage('votingPage');
+            } else {
+                showPage('loginForm');
+            }
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            hasVoted = false;
+            document.getElementById('voterForm').reset();
+            document.getElementById('adminForm').reset();
+            showPage('loginForm');
+        }
+
+        // Show message function
+        function showMessage(message, type) {
+            // Create toast message
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 z-50 p-4 rounded-lg text-white font-semibold animate-fade-in ${type === 'error' ? 'bg-red-500' : 'bg-green-500'
+                }`;
+            toast.textContent = message;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('adminBtn').addEventListener('click', () => showPage('adminLogin'));
+        document.getElementById('backToVoter').addEventListener('click', () => showPage('loginForm'));
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        // Initialize app
+        initializeData();
+        updateResults();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98f1b76e83d14ac1',t:'MTc2MDU1NjQ3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'98faf6674423aa11',t:'MTc2MDY1MzQyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+
+    
+</body>
+
+<!-- script jang ngirim data ka google sheet -->
+<script>
+  (function(){
+  // URL Web App dari Google Apps Script (ganti)
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwjVoyr6W3fXzY63rGOabfK0Lap3tVOLgzGJVjv7ojyCxbXB0LE2JlEJYPgVvHU0A2-/exec';
+
+  // jika saveData belum terdefinisi (untuk jaga-jaga), abort
+  if (typeof window.saveData !== 'function') {
+    console.warn('saveData() tidak ditemukan — hook Google Sheets dibatalkan.');
+    return;
+  }
+
+  // simpan referensi fungsi asli
+  const _originalSaveData = window.saveData;
+
+  // helper kirim ke Google Sheets
+  async function sendToSheet(voter) {
+    if (!voter || !voter.nim) return;
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(voter)
+      });
+      const json = await res.json().catch(()=>({}));
+      console.log('sendToSheet result:', json);
+      return json;
+    } catch (err) {
+      console.error('Gagal mengirim ke Google Sheets:', err);
+      return { status: 'error', message: err.toString() };
+    }
+  }
+
+  // wrapper untuk saveData
+  window.saveData = function() {
+    // panggil fungsi asli agar existing behavior tetap
+    try {
+      _originalSaveData.apply(this, arguments);
+    } catch (err) {
+      console.error('Kesalahan pada saveData asli:', err);
+      // tetap lanjut agar tidak memblokir
+    }
+
+    // ambil voter terakhir dari variabel global 'voters' (ada di kode asli)
+    try {
+      if (Array.isArray(window.voters) && window.voters.length > 0) {
+        const last = window.voters[window.voters.length - 1];
+
+        // siapkan payload yang dikirim ke Apps Script
+        const payload = {
+          nama: last.nama || '',
+          nim: last.nim || '',
+          prodi: last.prodi || '',
+          choice: last.choice || '',
+          candidateName: last.candidateName || '',
+          // gunakan timestamp client; backend akan mencatat server time juga
+          timestamp: last.timestamp || new Date().toLocaleString('id-ID')
+        };
+
+        // kirim, tapi jangan block UI — jika gagal, cukup console.error
+        sendToSheet(payload).then(result=>{
+          // opsional: tampilkan notifikasi kecil kalau berhasil
+          if (result && result.status === 'success') {
+            console.log('Vote tersimpan ke Google Sheets.');
+          }
+        });
+      }
+    } catch (err) {
+      console.error('Gagal membaca voters terakhir untuk dikirim:', err);
+    }
+  };
+
+  console.log('Hook saveData -> Google Sheets siap.');
+})();
+</script>
+
 
 </html>
