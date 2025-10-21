@@ -7,7 +7,7 @@
     <title>Pemilihan Gubernur Mahasiswa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-                body {
+        body {
             box-sizing: border-box;
         }
 
@@ -490,24 +490,32 @@
         };
 
         // Initialize data from localStorage
-        function initializeData() {
-            const savedVotes = localStorage.getItem('electionVotes');
-            const savedVoters = localStorage.getItem('electionVoters');
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhmPzBSLwLDHWyewe_Y21NrReqw12nnsLJhL021LOUu-Slhnes_UyPK_gvfCmP8RTl/exec";
 
-            if (savedVotes) {
-                votes = JSON.parse(savedVotes);
-            }
+        // Kirim hasil voting ke Google Sheet
+        async function sendVoteToSheet(voter, candidateId, candidateName) {
+            const data = {
+                nama: voter.nama,
+                nim: voter.nim,
+                prodi: voter.prodi,
+                calon: candidateName,
+                calonId: candidateId
+            };
 
-            if (savedVoters) {
-                voters = JSON.parse(savedVoters);
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+                console.log("Vote terkirim:", data);
+            } catch (error) {
+                console.error("Gagal kirim data:", error);
             }
         }
 
-        // Save data to localStorage
-        function saveData() {
-            localStorage.setItem('electionVotes', JSON.stringify(votes));
-            localStorage.setItem('electionVoters', JSON.stringify(voters));
-        }
+
 
         // Show specific page
         function showPage(pageId) {
@@ -592,30 +600,56 @@
         }
 
         // Confirm vote
-        function confirmVote(candidateId, candidateName) {
-            // Record vote
-            votes[candidateId]++;
+        // Ubah fungsi confirmVote()
+        async function confirmVote(candidateId, candidateName) {
+            // ✅ Tutup modal dulu
+            closeModal();
+            
+            // Tampilkan konfirmasi
+            document.getElementById("selectedCandidate").textContent = candidateName;
+            showPage("voteConfirmation");
 
-            // Record voter
             const voter = {
                 ...currentUser,
                 choice: candidateId,
                 candidateName: candidateName,
-                timestamp: new Date().toLocaleString('id-ID')
+                timestamp: new Date().toLocaleString("id-ID")
             };
 
-            voters.push(voter);
-            hasVoted = true;
+            // Kirim ke Google Sheet
+            await sendVoteToSheet(voter, candidateId, candidateName);
 
-            // Save data
-            saveData();
 
-            // Close modal
-            closeModal();
+        }
 
-            // Show confirmation
-            document.getElementById('selectedCandidate').textContent = candidateName;
-            showPage('voteConfirmation');
+        // Show results
+        function showResults() {
+            updateResults();
+            showPage('resultsPage');
+        }
+        async function updateResults() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+
+                const counts = { 1: 0, 2: 0, 3: 0 };
+                data.forEach(row => {
+                    if (counts[row.calonId]) counts[row.calonId]++;
+                });
+
+                const total = counts[1] + counts[2] + counts[3];
+                document.getElementById('totalVotes').textContent = total;
+
+                for (let i = 1; i <= 3; i++) {
+                    const voteCount = counts[i] || 0;
+                    const percentage = total > 0 ? Math.round((voteCount / total) * 100) : 0;
+                    document.getElementById(`votes${i}`).textContent = voteCount;
+                    document.getElementById(`percentage${i}`).textContent = `${percentage}%`;
+                    document.getElementById(`progress${i}`).style.width = `${percentage}%`;
+                }
+            } catch (error) {
+                console.error("Gagal ambil hasil:", error);
+            }
         }
 
         // Close modal
@@ -633,46 +667,68 @@
         }
 
         // Update results display
-        function updateResults() {
-            const total = votes[1] + votes[2] + votes[3];
-            document.getElementById('totalVotes').textContent = total;
+        async function updateResults() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json(); // <- baru bisa jalan setelah script di atas aktif
 
-            for (let i = 1; i <= 3; i++) {
-                const voteCount = votes[i];
-                const percentage = total > 0 ? Math.round((voteCount / total) * 100) : 0;
+                const counts = { 1: 0, 2: 0, 3: 0 };
+                data.forEach(row => {
+                    counts[row.calonId]++;
+                });
 
-                document.getElementById(`votes${i}`).textContent = voteCount;
-                document.getElementById(`percentage${i}`).textContent = `${percentage}%`;
-                document.getElementById(`progress${i}`).style.width = `${percentage}%`;
+                const total = counts[1] + counts[2] + counts[3];
+                document.getElementById('totalVotes').textContent = total;
+
+                for (let i = 1; i <= 3; i++) {
+                    const voteCount = counts[i] || 0;
+                    const percentage = total > 0 ? Math.round((voteCount / total) * 100) : 0;
+                    document.getElementById(`votes${i}`).textContent = voteCount;
+                    document.getElementById(`percentage${i}`).textContent = `${percentage}%`;
+                    document.getElementById(`progress${i}`).style.width = `${percentage}%`;
+                }
+
+            } catch (error) {
+                console.error("Gagal memuat data:", error);
             }
         }
 
+
         // Update admin dashboard
-        function updateAdminDashboard() {
-            const total = votes[1] + votes[2] + votes[3];
-            document.getElementById('adminTotalVotes').textContent = total;
-            document.getElementById('adminVotes1').textContent = votes[1];
-            document.getElementById('adminVotes2').textContent = votes[2];
-            document.getElementById('adminVotes3').textContent = votes[3];
+        async function updateAdminDashboard() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
 
-            // Update voter list
-            const voterList = document.getElementById('voterList');
-            voterList.innerHTML = '';
+                const counts = { 1: 0, 2: 0, 3: 0 };
+                data.forEach(row => {
+                    counts[row.calonId]++;
+                });
 
-            voters.forEach((voter, index) => {
-                const row = document.createElement('tr');
-                row.className = 'border-b border-gray-100';
-                row.innerHTML = `
-                    <td class="py-3 px-4">${index + 1}</td>
-                    <td class="py-3 px-4">${voter.nama}</td>
-                    <td class="py-3 px-4">${voter.nim}</td>
-                    <td class="py-3 px-4">${voter.prodi}</td>
-                    <td class="py-3 px-4">${voter.candidateName}</td>
-                    <td class="py-3 px-4">${voter.timestamp}</td>
-                `;
-                voterList.appendChild(row);
-            });
+                const total = counts[1] + counts[2] + counts[3];
+
+                document.getElementById('adminTotalVotes').textContent = total;
+                document.getElementById('adminVotes1').textContent = counts[1];
+                document.getElementById('adminVotes2').textContent = counts[2];
+                document.getElementById('adminVotes3').textContent = counts[3];
+
+                // tampilkan daftar pemilih
+                const voterList = document.getElementById('voterList');
+                voterList.innerHTML = data.map((voter, i) => `
+      <tr class="border-b border-gray-100">
+        <td class="py-3 px-4">${i + 1}</td>
+        <td class="py-3 px-4">${voter.nama}</td>
+        <td class="py-3 px-4">${voter.nim}</td>
+        <td class="py-3 px-4">${voter.prodi}</td>
+        <td class="py-3 px-4">${voter.calon}</td>
+        <td class="py-3 px-4">${voter.waktu}</td>
+      </tr>
+    `).join('');
+            } catch (error) {
+                console.error("Gagal ambil data admin:", error);
+            }
         }
+
 
         // Reset votes (admin only)
         function resetVotes() {
@@ -718,40 +774,44 @@
             showMessage('Semua data voting berhasil dihapus!', 'success');
         }
 
-        // Export results
-        function exportResults() {
-            const total = votes[1] + votes[2] + votes[3];
-            const results = `
-HASIL PEMILIHAN GUBERNUR MAHASISWA
-==================================
+        async function exportResults() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
 
-Total Pemilih: ${total}
+                const counts = { 1: 0, 2: 0, 3: 0 };
+                data.forEach(row => {
+                    if (counts[row.calonId] !== undefined) {
+                        counts[row.calonId]++;
+                    }
+                });
 
-Perolehan Suara:
-1. Ahmad Rizki: ${votes[1]} suara (${total > 0 ? Math.round((votes[1] / total) * 100) : 0}%)
-2. Sari Putri: ${votes[2]} suara (${total > 0 ? Math.round((votes[2] / total) * 100) : 0}%)
-3. Doni Mahendra: ${votes[3]} suara (${total > 0 ? Math.round((votes[3] / total) * 100) : 0}%)
+                const total = data.length;
+                let content = "Hasil Voting - E-Voting Online\n\n";
+                for (let id in candidates) {
+                    content += `${candidates[id]}: ${counts[id]} suara\n`;
+                }
+                content += `\nTotal Pemilih: ${total}\n\nDaftar Pemilih:\n`;
 
-Daftar Pemilih:
-${voters.map((voter, index) =>
-                `${index + 1}. ${voter.nama} (${voter.nim}) - ${voter.prodi} - Memilih: ${voter.candidateName} - ${voter.timestamp}`
-            ).join('\n')}
+                data.forEach((row, index) => {
+                    content += `${index + 1}. ${row.nama} (${row.nim}) - ${row.prodi} - Pilih: ${row.calon}\n`;
+                });
 
-Diekspor pada: ${new Date().toLocaleString('id-ID')}
-            `;
+                // Download file hasil
+                const blob = new Blob([content], { type: "text/plain" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "hasil_voting.txt";
+                a.click();
 
-            const blob = new Blob([results], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `hasil-pemilihan-${new Date().toISOString().split('T')[0]}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            showMessage('Hasil berhasil diekspor!', 'success');
+                alert("✅ Data berhasil diexport!");
+            } catch (error) {
+                console.error("Gagal export data:", error);
+                alert("❌ Gagal export data. Periksa koneksi ke Google Sheet.");
+            }
         }
+
 
         // Show voting page
         function showVoting() {
@@ -796,85 +856,6 @@ Diekspor pada: ${new Date().toLocaleString('id-ID')}
         updateResults();
     </script>
     <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'98faf6674423aa11',t:'MTc2MDY1MzQyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
-
-    
 </body>
-
-<!-- script jang ngirim data ka google sheet -->
-<script>
-  (function(){
-  // URL Web App dari Google Apps Script (ganti)
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwjVoyr6W3fXzY63rGOabfK0Lap3tVOLgzGJVjv7ojyCxbXB0LE2JlEJYPgVvHU0A2-/exec';
-
-  // jika saveData belum terdefinisi (untuk jaga-jaga), abort
-  if (typeof window.saveData !== 'function') {
-    console.warn('saveData() tidak ditemukan — hook Google Sheets dibatalkan.');
-    return;
-  }
-
-  // simpan referensi fungsi asli
-  const _originalSaveData = window.saveData;
-
-  // helper kirim ke Google Sheets
-  async function sendToSheet(voter) {
-    if (!voter || !voter.nim) return;
-    try {
-      const res = await fetch(WEB_APP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(voter)
-      });
-      const json = await res.json().catch(()=>({}));
-      console.log('sendToSheet result:', json);
-      return json;
-    } catch (err) {
-      console.error('Gagal mengirim ke Google Sheets:', err);
-      return { status: 'error', message: err.toString() };
-    }
-  }
-
-  // wrapper untuk saveData
-  window.saveData = function() {
-    // panggil fungsi asli agar existing behavior tetap
-    try {
-      _originalSaveData.apply(this, arguments);
-    } catch (err) {
-      console.error('Kesalahan pada saveData asli:', err);
-      // tetap lanjut agar tidak memblokir
-    }
-
-    // ambil voter terakhir dari variabel global 'voters' (ada di kode asli)
-    try {
-      if (Array.isArray(window.voters) && window.voters.length > 0) {
-        const last = window.voters[window.voters.length - 1];
-
-        // siapkan payload yang dikirim ke Apps Script
-        const payload = {
-          nama: last.nama || '',
-          nim: last.nim || '',
-          prodi: last.prodi || '',
-          choice: last.choice || '',
-          candidateName: last.candidateName || '',
-          // gunakan timestamp client; backend akan mencatat server time juga
-          timestamp: last.timestamp || new Date().toLocaleString('id-ID')
-        };
-
-        // kirim, tapi jangan block UI — jika gagal, cukup console.error
-        sendToSheet(payload).then(result=>{
-          // opsional: tampilkan notifikasi kecil kalau berhasil
-          if (result && result.status === 'success') {
-            console.log('Vote tersimpan ke Google Sheets.');
-          }
-        });
-      }
-    } catch (err) {
-      console.error('Gagal membaca voters terakhir untuk dikirim:', err);
-    }
-  };
-
-  console.log('Hook saveData -> Google Sheets siap.');
-})();
-</script>
-
 
 </html>
