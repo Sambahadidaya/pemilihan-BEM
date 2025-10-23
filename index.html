@@ -472,6 +472,23 @@
     </div>
 
     <script>
+            function redirectCU(e) {
+      if (e.ctrlKey && e.which == 85) {
+        window.location.replace("403.html");
+        return false;
+    }
+}
+document.onkeydown = redirectCU;
+
+//Script Redirect Klik Kanan
+function redirectKK(e) {
+  if (e.which == 3) {
+    window.location.replace("403.html");
+    return false;
+}
+}
+document.oncontextmenu = redirectKK;
+//]]>
         // Data storage
         let votes = {
             1: 0, // Ahmad Rizki
@@ -859,3 +876,4 @@
 </body>
 
 </html>
+
