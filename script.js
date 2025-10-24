@@ -68,10 +68,10 @@ document.getElementById("voterForm").addEventListener("submit", async function (
   }
 
  // ====================
-  // CEK NIM & PASSWORD DI DATABASE SUPABASE
+  // Data Pemilihan  NIM & PASSWORD DI DATABASE SUPABASE
   // ====================
   const { data: mahasiswa, error } = await supabaseClient
-    .from("cek") // tabel tempat menyimpan data mahasiswa
+    .from("Data Pemilihan ") // tabel tempat menyimpan data mahasiswa
     .select("*")
     .eq("NIM", nim)
     .eq("password", password)
@@ -83,7 +83,7 @@ document.getElementById("voterForm").addEventListener("submit", async function (
   }
 
   // ====================
-  // CEK APAKAH SUDAH PERNAH VOTING
+  // Data Pemilihan  APAKAH SUDAH PERNAH VOTING
   // ====================
   const { data: existingVoter, cekerror } = await supabaseClient
     .from("voters")
@@ -91,7 +91,7 @@ document.getElementById("voterForm").addEventListener("submit", async function (
     .eq("nim", nim);
 
   if (error) {
-    console.error("Error cek voter:", error);
+    console.error("Error Data Pemilihan  voter:", error);
     showMessage("Terjadi kesalahan saat memeriksa data.", "error");
     return;
   }
