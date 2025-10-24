@@ -71,7 +71,7 @@ document.getElementById("voterForm").addEventListener("submit", async function (
   // Data Pemilihan  NIM & PASSWORD DI DATABASE SUPABASE
   // ====================
   const { data: mahasiswa, error } = await supabaseClient
-    .from("Data Pemilihan ") // tabel tempat menyimpan data mahasiswa
+    .from("DataPemilihan") // tabel tempat menyimpan data mahasiswa
     .select("*")
     .eq("NIM", nim)
     .eq("password", password)
@@ -345,3 +345,4 @@ document.getElementById("logoutBtn").addEventListener("click", logout);
 // INISIALISASI
 // ====================
 updateResults();
+
