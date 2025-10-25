@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pemilihan Presiden Mahasiswa</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Tambahkan ini di <head> atau sebelum <script> kamu -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // ====================
@@ -57,6 +56,28 @@
     .progress-bar {
       transition: width 0.5s ease-in-out;
     }
+
+    /* Tambahan untuk spinner loading */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 8px;
+    }
+    .spinner.hidden {
+      display: none;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
@@ -88,41 +109,12 @@
             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
         </div>
 
-        <button type="submit"
+        <button type="submit" id="loginBtn"
           class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+          <span class="spinner hidden"></span>
           Masuk ke Voting
         </button>
       </form>
-    </div>
-  </div>
-
-  <!-- Admin Login -->
-  <div id="adminLogin" class="min-h-screen flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl card-shadow p-8 w-full max-w-md animate-fade-in">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Login Admin</h1>
-        <p class="text-gray-600">Masukkan password admin</p>
-      </div>
-
-      <form id="adminForm" class="space-y-6">
-        <div>
-          <label for="adminPassword" class="block text-sm font-medium text-gray-700 mb-2">Password
-            Admin</label>
-          <input type="password" id="adminPassword" required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-        </div>
-
-        <button type="submit"
-          class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-          Login Admin
-        </button>
-      </form>
-
-      <div class="mt-6 text-center">
-        <button id="backToVoter" class="text-sm text-gray-500 hover:text-gray-700 underline">
-          Kembali ke Login Mahasiswa
-        </button>
-      </div>
     </div>
   </div>
 
@@ -134,7 +126,8 @@
           <h1 class="text-3xl font-bold text-gray-800">Pemilihan Presiden Mahasiswa</h1>
           <p class="text-gray-600 mt-2">Selamat datang, <span id="voterName" class="font-semibold"></span></p>
         </div>
-        <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+        <button onclick="logout()" id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+          <span class="spinner hidden"></span>
           Logout
         </button>
       </div>
@@ -167,9 +160,10 @@
               Kegiatan ekstrakurikuler
             </div>
           </div>
-          
-          <button onclick="vote(1)"
+
+          <button onclick="vote(1)" id="voteBtn1"
             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+            <span class="spinner hidden"></span>
             Pilih Calon Ini
           </button>
         </div>
@@ -184,7 +178,7 @@
             <h3 class="text-xl font-bold text-gray-800">Sari Putri</h3>
             <p class="text-gray-600">Calon No. 2</p>
           </div>
-          
+
           <div class="space-y-3 mb-6">
             <div class="flex items-center text-sm text-gray-600">
               <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
@@ -200,8 +194,9 @@
             </div>
           </div>
 
-          <button onclick="vote(2)"
+          <button onclick="vote(2)" id="voteBtn2"
             class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+            <span class="spinner hidden"></span>
             Pilih Calon Ini
           </button>
         </div>
@@ -232,8 +227,9 @@
             </div>
           </div>
 
-          <button onclick="vote(3)"
+          <button onclick="vote(3)" id="voteBtn3"
             class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+            <span class="spinner hidden"></span>
             Pilih Calon Ini
           </button>
         </div>
@@ -255,13 +251,15 @@
       <p class="text-sm text-gray-500 mb-8">Anda telah memilih: <span id="selectedCandidate"
           class="font-semibold"></span></p>
 
-      <button onclick="showResults()"
+      <button onclick="showResults()" id="showResultsBtn"
         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 mb-4">
+        <span class="spinner hidden"></span>
         Lihat Hasil Sementara
       </button>
 
-      <button onclick="logout()"
+      <button onclick="logout()" id="logoutConfirmBtn"
         class="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+        <span class="spinner hidden"></span>
         Keluar
       </button>
     </div>
@@ -276,12 +274,9 @@
           <p class="text-gray-600 mt-2">Hasil sementara pemilihan gubernur mahasiswa</p>
         </div>
         <div class="flex gap-2">
-          <button onclick="showVoting()"
-            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
-            Kembali ke Voting
-          </button>
-          <button onclick="logout()"
+          <button onclick="logout()" id="logoutResultsBtn"
             class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+            <span class="spinner hidden"></span>
             Logout
           </button>
         </div>
@@ -374,94 +369,11 @@
         </div>
 
         <div class="mt-8 text-center">
-          <button onclick="updateResults()"
+          <button onclick="updateResults()" id="refreshBtn"
             class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+            <span class="spinner hidden"></span>
             Refresh Hasil
           </button>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Admin Dashboard -->
-  <div id="adminDashboard" class="min-h-screen p-4 hidden">
-    <header class="bg-white rounded-2xl card-shadow p-6 mb-8 animate-fade-in">
-      <div class="flex justify-between items-center">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-800">Dashboard Admin</h1>
-          <p class="text-gray-600 mt-2">Kelola pemilihan gubernur mahasiswa</p>
-        </div>
-        <button onclick="logout()"
-          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
-          Logout
-        </button>
-      </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto">
-      <div class="grid md:grid-cols-2 gap-8 mb-8">
-        <!-- Statistics -->
-        <div class="bg-white rounded-2xl card-shadow p-6 animate-fade-in">
-          <h2 class="text-xl font-bold text-gray-800 mb-4">Statistik Pemilihan</h2>
-          <div class="space-y-4">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Total Pemilih:</span>
-              <span class="font-semibold" id="adminTotalVotes">0</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Ahmad Rizki:</span>
-              <span class="font-semibold text-blue-600" id="adminVotes1">0</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Sari Putri:</span>
-              <span class="font-semibold text-green-600" id="adminVotes2">0</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Doni Mahendra:</span>
-              <span class="font-semibold text-purple-600" id="adminVotes3">0</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="bg-white rounded-2xl card-shadow p-6 animate-fade-in">
-          <h2 class="text-xl font-bold text-gray-800 mb-4">Aksi Admin</h2>
-          <div class="space-y-4">
-            <button onclick="resetVotes()"
-              class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-              Reset Semua Suara
-            </button>
-            <button onclick="exportResults()"
-              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-              Export Hasil
-            </button>
-            <button onclick="showResults()"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-              Lihat Hasil Detail
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Voter List -->
-      <div class="bg-white rounded-2xl card-shadow p-6 animate-fade-in">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Daftar Pemilih</h2>
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="border-b border-gray-200">
-                <th class="text-left py-3 px-4">No</th>
-                <th class="text-left py-3 px-4">Nama</th>
-                <th class="text-left py-3 px-4">NIM</th>
-                <th class="text-left py-3 px-4">Program Studi</th>
-                <th class="text-left py-3 px-4">Pilihan</th>
-                <th class="text-left py-3 px-4">Waktu</th>
-              </tr>
-            </thead>
-            <tbody id="voterList">
-              <!-- Voter data will be populated here -->
-            </tbody>
-          </table>
         </div>
       </div>
     </main>
