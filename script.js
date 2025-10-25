@@ -12,6 +12,22 @@ const candidates = {
 };
 
 // ====================
+// FUNGSI LOADING STATE UNTUK TOMBOL
+// ====================
+function setLoadingState(buttonId, isLoading) {
+  const button = document.getElementById(buttonId);
+  if (!button) return;  // Jika tombol tidak ada, skip
+  const spinner = button.querySelector('.spinner');
+  if (isLoading) {
+    spinner.classList.remove('hidden');
+    button.disabled = true;
+  } else {
+    spinner.classList.add('hidden');
+    button.disabled = false;
+  }
+}
+
+// ====================
 // KIRIM VOTE KE SUPABASE
 // ====================
 async function sendVoteToSupabase(nama, nim, password, calon, calon_id) {
@@ -23,13 +39,16 @@ async function sendVoteToSupabase(nama, nim, password, calon, calon_id) {
       .insert([
         { nama, nim, password, calon, calon_id, waktu }
       ]);
-
     if (error) {
       console.error('Gagal kirim ke Supabase:', error);
       alert("Maaf Anda sudah melakukan Voting!");
     } else {
       console.log('Data berhasil dikirim:', data);
       alert("Vote berhasil disimpan!");
+      const { error: updateError } = await supabaseClient
+        .from('cek')
+        .update({ StatusVote: 'sudah vote' })
+        .eq('NIM', nim);
     }
   } catch (err) {
     console.error('Kesalahan jaringan:', err);
@@ -57,6 +76,7 @@ function showPage(pageId) {
 // ====================
 document.getElementById("voterForm").addEventListener("submit", async function (e) {
   e.preventDefault();
+  setLoadingState('loginBtn', true);
 
   const nama = document.getElementById("nama").value.trim();
   const nim = document.getElementById("nim").value.trim();
@@ -64,61 +84,45 @@ document.getElementById("voterForm").addEventListener("submit", async function (
 
   if (!nama || !nim || !password) {
     showMessage("Mohon lengkapi semua data!", "error");
+    setLoadingState('loginBtn', false);
     return;
   }
 
- // ====================
-  // Data Pemilihan  NIM & PASSWORD DI DATABASE SUPABASE
-  // ====================
   const { data: mahasiswa, error } = await supabaseClient
-    .from("DataMahasiswa") // tabel tempat menyimpan data mahasiswa
+    .from("cek")
     .select("*")
     .eq("NIM", nim)
     .eq("password", password)
-    .single(); // hanya satu baris yang cocok
+    .single();
 
   if (error || !mahasiswa) {
     alert("NIM atau password salah!");
+    setLoadingState('loginBtn', false);
     return;
   }
 
-  // ====================
-  // Data Pemilihan  APAKAH SUDAH PERNAH VOTING
-  // ====================
   const { data: existingVoter, cekerror } = await supabaseClient
     .from("voters")
     .select("nim")
     .eq("nim", nim);
 
-  if (error) {
-    console.error("Error Data Pemilihan  voter:", error);
+  if (cekerror) {
+    console.error("Error Data Pemilihan voter:", cekerror);
     showMessage("Terjadi kesalahan saat memeriksa data.", "error");
+    setLoadingState('loginBtn', false);
     return;
   }
 
   if (existingVoter.length > 0) {
     showMessage("NIM ini sudah pernah melakukan voting!", "error");
+    setLoadingState('loginBtn', false);
     return;
   }
 
   currentUser = { nama, nim, password };
   document.getElementById("voterName").textContent = nama;
+  setLoadingState('loginBtn', false);
   showPage("votingPage");
-});
-
-// ====================
-// LOGIN ADMIN
-// ====================
-document.getElementById("adminForm").addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const password = document.getElementById("adminPassword").value;
-  if (password === "panitia25") {
-    updateAdminDashboard();
-    showPage("adminDashboard");
-  } else {
-    showMessage("Password admin salah!", "error");
-  }
 });
 
 // ====================
@@ -141,7 +145,9 @@ function showVoteConfirmation(candidateId, candidateName) {
       <h3 class="text-xl font-bold text-gray-800 mb-4">Konfirmasi Pilihan</h3>
       <p class="text-gray-600 mb-6">Apakah Anda yakin memilih <strong>${candidateName}</strong>?</p>
       <div class="flex gap-4">
-        <button onclick="confirmVote(${candidateId}, '${candidateName}')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Ya, Pilih</button>
+        <button id="confirmVoteBtn" onclick="confirmVote(${candidateId}, '${candidateName}')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
+          <span class="spinner hidden"></span>Ya, Pilih
+        </button>
         <button onclick="closeModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors">Batal</button>
       </div>
     </div>`;
@@ -150,12 +156,12 @@ function showVoteConfirmation(candidateId, candidateName) {
 }
 
 async function confirmVote(candidateId, candidateName) {
+  setLoadingState('confirmVoteBtn', true);
   closeModal();
   document.getElementById("selectedCandidate").textContent = candidateName;
   showPage("voteConfirmation");
 
   const voter = { ...currentUser };
-  // ubah di sini ↓↓↓
   await sendVoteToSupabase(
     voter.nama,
     voter.nim,
@@ -165,13 +171,14 @@ async function confirmVote(candidateId, candidateName) {
   );
 
   hasVoted = true;
+  setLoadingState('confirmVoteBtn', false);
 }
-
 
 // ====================
 // UPDATE HASIL VOTING
 // ====================
 async function updateResults() {
+  setLoadingState('refreshBtn', true);
   try {
     const { data, error } = await supabaseClient.from("voters").select("*");
     if (error) throw error;
@@ -195,116 +202,8 @@ async function updateResults() {
     }
   } catch (error) {
     console.error("Gagal memuat hasil:", error);
-  }
-}
-
-// ====================
-// DASHBOARD ADMIN
-// ====================
-async function updateAdminDashboard() {
-  try {
-    const { data, error } = await supabaseClient.from("voters").select("*");
-    if (error) throw error;
-
-    const counts = { 1: 0, 2: 0, 3: 0 };
-    data.forEach(row => {
-      if (counts[row.calon_id] !== undefined) counts[row.calon_id]++;
-    });
-
-    const total = counts[1] + counts[2] + counts[3];
-    document.getElementById("adminTotalVotes").textContent = total;
-    document.getElementById("adminVotes1").textContent = counts[1];
-    document.getElementById("adminVotes2").textContent = counts[2];
-    document.getElementById("adminVotes3").textContent = counts[3];
-
-    const voterList = document.getElementById("voterList");
-    voterList.innerHTML = data
-      .map(
-        (voter, i) => `
-      <tr class="border-b border-gray-100">
-        <td class="py-3 px-4">${i + 1}</td>
-        <td class="py-3 px-4">${voter.nama}</td>
-        <td class="py-3 px-4">${voter.nim}</td>
-        <td class="py-3 px-4">${voter.password}</td>
-        <td class="py-3 px-4">${voter.calon}</td>
-        <td class="py-3 px-4">${voter.waktu || "-"}</td>
-      </tr>`
-      )
-      .join("");
-  } catch (error) {
-    console.error("Gagal ambil data admin:", error);
-  }
-}
-
-// ====================
-// RESET DATA (ADMIN)
-// ====================
-function showResetConfirmation() {
-  const modal = document.createElement("div");
-  modal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
-  modal.innerHTML = `
-    <div class="bg-white rounded-2xl p-8 max-w-md mx-4 animate-fade-in">
-      <div class="text-center mb-6">
-        <h3 class="text-xl font-bold text-gray-800 mb-2">Hapus Semua Data</h3>
-        <p class="text-gray-600">Apakah Anda yakin ingin menghapus semua data voting?</p>
-      </div>
-      <div class="flex gap-4">
-        <button onclick="confirmReset()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg">Ya, Hapus</button>
-        <button onclick="closeModal()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg">Batal</button>
-      </div>
-    </div>`;
-  document.body.appendChild(modal);
-  window.currentModal = modal;
-}
-
-async function confirmReset() {
-  try {
-    const { error } = await supabaseClient.from("voters").delete();
-    if (error) throw error;
-    showMessage("Semua data voting berhasil dihapus!", "success");
-    updateAdminDashboard();
-    closeModal();
-  } catch (error) {
-    console.error("Gagal hapus data:", error);
-    showMessage("Gagal menghapus data!", "error");
-  }
-}
-
-// ====================
-// EXPORT DATA
-// ====================
-async function exportResults() {
-  try {
-    const { data, error } = await supabaseClient.from("voters").select("*");
-    if (error) throw error;
-
-    const counts = { 1: 0, 2: 0, 3: 0 };
-    data.forEach(row => {
-      if (counts[row.calon_id] !== undefined) counts[row.calon_id]++;
-    });
-
-    const total = counts[1] + counts[2] + counts[3];
-    let content = "Hasil Voting - E-Voting Online\n\n";
-    for (let id in candidates) {
-      content += `${candidates[id]}: ${counts[id]} suara\n`;
-    }
-    content += `\nTotal Pemilih: ${total}\n\nDaftar Pemilih:\n`;
-
-    data.forEach((row, index) => {
-      content += `${index + 1}. ${row.nama} (${row.nim}) - ${row.password} - Pilih: ${row.calon}\n`;
-    });
-
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "hasil_voting.txt";
-    a.click();
-
-    showMessage("✅ Data berhasil diexport!", "success");
-  } catch (error) {
-    console.error("Gagal export data:", error);
-    showMessage("❌ Gagal export data.", "error");
+  } finally {
+    setLoadingState('refreshBtn', false);
   }
 }
 
@@ -317,13 +216,24 @@ function closeModal() {
     window.currentModal = null;
   }
 }
+function showVoting() {
+  showPage("votingPage");
+}
+function showResults() {
+  updateResults();
+  showPage("resultsPage");
+}
 
-function logout() {
-  currentUser = null;
-  hasVoted = false;
-  document.getElementById("voterForm").reset();
-  document.getElementById("adminForm").reset();
-  showPage("loginForm");
+function logout(buttonId) {
+  setLoadingState(buttonId, true);
+  setTimeout(() => {
+    currentUser = null;
+    hasVoted = false;
+    document.getElementById("voterForm").reset();
+    document.getElementById("adminForm")?.reset();
+    showPage("loginForm");
+    setLoadingState(buttonId, false);
+  }, 500);
 }
 
 function showMessage(message, type) {
@@ -338,12 +248,13 @@ function showMessage(message, type) {
 // ====================
 // EVENT LISTENER
 // ====================
-document.getElementById("backToVoter").addEventListener("click", () => showPage("loginForm"));
-document.getElementById("logoutBtn").addEventListener("click", logout);
+document.getElementById("logoutBtn").addEventListener("click", (e) => logout(e.target.id));
+document.getElementById("logoutConfirmBtn").addEventListener("click", (e) => logout(e.target.id));
+document.getElementById("logoutResultsBtn").addEventListener("click", (e) => logout(e.target.id));
+document.getElementById("showResultsBtn").addEventListener("click", showResults);
 
 // ====================
 // INISIALISASI
 // ====================
 updateResults();
-
-
+showPage("loginForm");
