@@ -52,7 +52,7 @@ document.getElementById("adminForm").addEventListener("submit", function (e) {
     setLoadingState('adminLoginBtn', true);
 
     const password = document.getElementById("adminPassword").value;
-    if (password === "panitia25") {
+    if (password === "2024-2025") {
         updateAdminDashboard();
         showPage("adminDashboard");
         setLoadingState('adminLoginBtn', false);
@@ -224,3 +224,4 @@ document.getElementById("backToVoter").addEventListener("click", () => {
 // ====================
 showPage("adminLogin");
 updateResults();
+
