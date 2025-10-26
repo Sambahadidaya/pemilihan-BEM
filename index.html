@@ -24,6 +24,16 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
+    p {
+      color: rgb(255, 255, 255);
+    }
+
+    h2 {
+      color: rgb(255, 255, 255);
+    }
+
+
+
     .card-shadow {
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
@@ -68,45 +78,121 @@
       animation: spin 1s ease-in-out infinite;
       margin-right: 8px;
     }
+
     .spinner.hidden {
       display: none;
     }
+
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
+
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+    }
+    
+    .edit-bg {
+      background-color: rgba(255, 255, 255, 0.192);
+      border: 2px solid #c7c7c7;
+      border-radius: 10px;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.705);
+    }
+
+    .wrep {
+      position: relative;
+      background-color: transparent;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .wrep .form-edit input {
+      width: 100%;
+      position: relative;
+    }
+
+    .wrep .form-edit .edit-input {
+      position: relative;
+      width: 100%;
+      height: 50px;
+      border-bottom: 2px solid #ffffff;
+      margin: 30px 0;
+    }
+
+    .wrep .form-edit .edit-input label {
+      position: absolute;
+      top: 50%;
+      left: 5px;
+      transform: translateY(-50%);
+      font-weight: 500;
+      color: #000000;
+      pointer-events: none;
+    }
+
+    .wrep .form-edit .edit-input input:focus~label,
+    .wrep .form-edit .edit-input input:valid~label {
+      transform: translateY(-50%);
+      top: -10px;
+      left: 0;
+      color: #ffffff;
+    }
+
+    .form-edit .edit-input input {
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.082);
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-size: 1.1rem;
+    }
+
+    .form-edit .edit-input .icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #000000;
+      font-size: 1.5rem;
+      line-height: 57px;
     }
   </style>
 </head>
 
 <body class="gradient-bg min-h-screen">
   <!-- Login Form -->
-  <div id="loginForm" class="min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl card-shadow p-8 w-full max-w-md animate-fade-in">
+  <div id="loginForm" class="wrep min-h-screen flex items-center justify-center p-4">
+    <div class="edit-bg form-edit rounded-2xl card-shadow p-8 w-full max-w-md animate-fade-in">
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Pemilihan Presiden Mahasiswa</h1>
-        <p class="text-gray-600">Masukkan data Anda untuk memulai voting</p>
+        <h1 class="text-3xl font-bold text-black-800 mb-2">Pemilihan Presiden Mahasiswa</h1>
+        <p class="text-black-600">Masukkan data Anda untuk memulai voting</p>
       </div>
 
-      <form id="voterForm" class="space-y-6">
-        <div>
-          <label for="nama" class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-          <input type="text" id="nama" placeholder="Masukkan Nama Lengkap" required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+      <form id="voterForm" class=" space-y-6">
+        <div class="edit-input">
+          <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
+          <input type="text" id="nama" required
+          class="w-full text-sm font-medium text-black-300 px-4 py-3 border border-black-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+          <label for="nama" class=" text-sm font-medium text-black-700 mb-2">Nama Lengkap</label>
         </div>
 
-        <div>
-          <label for="nim" class="block text-sm font-medium text-gray-700 mb-2">NIM</label>
-          <input type="text" id="nim" placeholder="Masukkan NIM" required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        <div class="edit-input">
+          <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
+          <input type="text" id="nim"  required
+          class="w-full text-sm font-medium text-black-300 px-4 py-3 border border-black-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+          <label for="nim" class="block text-sm font-medium text-black-700 mb-2">NIM</label>
         </div>
 
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-          <input type="password" id="password" placeholder="Masukkan Password" required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        <div class="edit-input">
+          <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
+          <input type="password" id="password" required
+          class="w-full text-sm font-medium text-black-300 px-4 py-3 border border-black-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+          <label for="password" class="block text-sm font-medium text-black-700 mb-2">Password</label>
         </div>
 
         <button type="submit" id="loginBtn"
@@ -126,7 +212,8 @@
           <h1 class="text-3xl font-bold text-gray-800">Pemilihan Presiden Mahasiswa</h1>
           <p class="text-gray-600 mt-2">Selamat datang, <span id="voterName" class="font-semibold"></span></p>
         </div>
-        <button onclick="logout()" id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+        <button onclick="logout()" id="logoutBtn"
+          class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
           <span class="spinner hidden"></span>
           Logout
         </button>
@@ -271,7 +358,7 @@
       <div class="flex justify-between items-center">
         <div>
           <h1 class="text-3xl font-bold text-gray-800">Hasil Pemilihan</h1>
-          <p class="text-gray-600 mt-2">Hasil sementara pemilihan gubernur mahasiswa</p>
+          <p class="text-gray-600 mt-2">Hasil sementara pemilihan presiden mahasiswa</p>
         </div>
         <div class="flex gap-2">
           <button onclick="logout()" id="logoutResultsBtn"
@@ -398,6 +485,9 @@
     }
     document.oncontextmenu = redirectKK;
     //]]></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
 </body>
 
 </html>
