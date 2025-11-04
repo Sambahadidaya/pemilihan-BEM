@@ -1,15 +1,10 @@
 // ====================
 // VARIABEL UTAMA
 // ====================
-let votes = { 1: 0, 2: 0, 3: 0 };
+let votes = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0 };  // Bisa diperluas jika kandidat >3
 let currentUser = null;
 let hasVoted = false;
-
-const candidates = {
-  1: "Ahmad Rizki",
-  2: "Sari Putri",
-  3: "Doni Mahendra"
-};
+let kandidatData = [];  // Tambahkan variabel untuk menyimpan data kandidat dinamis
 
 // ====================
 // FUNGSI LOADING STATE UNTUK TOMBOL
@@ -30,14 +25,14 @@ function setLoadingState(buttonId, isLoading) {
 // ====================
 // KIRIM VOTE KE SUPABASE
 // ====================
-async function sendVoteToSupabase(nama, nim, password, calon, calon_id) {
+async function sendVoteToSupabase(nama, nim, password, calon, calon_id, Angkatan, Prodi) {
   const waktu = new Date().toISOString();
 
   try {
     const { data, error } = await supabaseClient
       .from('voters')
       .insert([
-        { nama, nim, password, calon, calon_id, waktu }
+        { nama, nim, password, calon, calon_id, waktu, Angkatan, Prodi }
       ]);
     if (error) {
       console.error('Gagal kirim ke Supabase:', error);
@@ -119,7 +114,7 @@ document.getElementById("voterForm").addEventListener("submit", async function (
     return;
   }
 
-  currentUser = { nama, nim, password };
+  currentUser = { nama, nim, password, Angkatan:mahasiswa.Angkatan , Prodi: mahasiswa.Prodi };
   document.getElementById("voterName").textContent = nama;
   setLoadingState('loginBtn', false);
   showPage("votingPage");
@@ -133,7 +128,9 @@ function vote(candidateId) {
     showMessage("Anda sudah melakukan voting!", "error");
     return;
   }
-  const candidateName = candidates[candidateId];
+  // Cari nama kandidat dari kandidatData berdasarkan ID
+  const candidate = kandidatData.find(k => k.No == candidateId);
+  const candidateName = candidate ? candidate.nama : "Kandidat Tidak Ditemukan";
   showVoteConfirmation(candidateId, candidateName);
 }
 
@@ -167,7 +164,9 @@ async function confirmVote(candidateId, candidateName) {
     voter.nim,
     voter.password,
     candidateName,
-    candidateId
+    candidateId,
+    voter.Angkatan,
+    voter.Prodi,
   );
 
   hasVoted = true;
@@ -177,34 +176,58 @@ async function confirmVote(candidateId, candidateName) {
 // ====================
 // UPDATE HASIL VOTING
 // ====================
+// Di script.js, update updateResults
 async function updateResults() {
-  setLoadingState('refreshBtn', true);
-  try {
-    const { data, error } = await supabaseClient.from("voters").select("*");
-    if (error) throw error;
+    setLoadingState('refreshBtn', true);
+    try {
+        // Pastikan kandidatData tersedia
+        if (kandidatData.length === 0) await loadKandidat();
 
-    const counts = { 1: 0, 2: 0, 3: 0 };
-    if (data && data.length > 0) {
-      data.forEach(row => {
-        if (counts[row.calon_id] !== undefined) counts[row.calon_id]++;
-      });
+        const { data, error } = await supabaseClient.from("voters").select("*");
+        if (error) throw error;
+
+        const counts = {};
+        kandidatData.forEach(k => counts[k.No] = 0);
+        data.forEach(row => {
+            if (counts[row.calon_id] !== undefined) counts[row.calon_id]++;
+        });
+
+        const total = Object.values(counts).reduce((a, b) => a + b, 0);
+        document.getElementById("totalVotes").textContent = total;
+
+        // Update results dinamis
+        const resultsContainer = document.getElementById("resultsContainer");
+        resultsContainer.innerHTML = kandidatData.map(k => {
+            const voteCount = counts[k.No] || 0;
+            const percentage = total > 0 ? Math.round((voteCount / total) * 100) : 0;
+            return `
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 mx-auto mb-4 rounded-full overflow-hidden">
+                                <img src="/versi5/assets/default.jpg" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800">  ???</h3>
+                                <p class="text-sm text-gray-600">Calon No.  ???</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-black" id="votes${k.No}">${voteCount}</div>
+                            <div class="text-sm text-gray-600" id="percentage${k.No}">${percentage}%</div>
+                        </div>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div class="bg-black h-3 rounded-full progress-bar" id="progress${k.No}" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    } catch (error) {
+        console.error("Gagal memuat hasil:", error);
+    } finally {
+        setLoadingState('refreshBtn', false);
     }
-
-    const total = counts[1] + counts[2] + counts[3];
-    document.getElementById("totalVotes").textContent = total;
-
-    for (let i = 1; i <= 3; i++) {
-      const voteCount = counts[i];
-      const percentage = total > 0 ? Math.round((voteCount / total) * 100) : 0;
-      document.getElementById(`votes${i}`).textContent = voteCount;
-      document.getElementById(`percentage${i}`).textContent = `${percentage}%`;
-      document.getElementById(`progress${i}`).style.width = `${percentage}%`;
-    }
-  } catch (error) {
-    console.error("Gagal memuat hasil:", error);
-  } finally {
-    setLoadingState('refreshBtn', false);
-  }
 }
 
 // ====================
@@ -218,6 +241,8 @@ function closeModal() {
 }
 function showVoting() {
   showPage("votingPage");
+  loadKandidat();
+
 }
 function showResults() {
   updateResults();
@@ -252,6 +277,44 @@ document.getElementById("logoutBtn").addEventListener("click", (e) => logout(e.t
 document.getElementById("logoutConfirmBtn").addEventListener("click", (e) => logout(e.target.id));
 document.getElementById("logoutResultsBtn").addEventListener("click", (e) => logout(e.target.id));
 document.getElementById("showResultsBtn").addEventListener("click", showResults);
+
+// ====================
+// TAMPILKAN KANDIDAT DARI SUPABASE
+// ====================
+async function loadKandidat() {
+  const container = document.getElementById("kandidatList");
+  const { data, error } = await supabaseClient.from("kandidat").select("*");
+  if (error) {
+    console.error(error);
+    container.innerHTML = `<p class='text-red-500'>Gagal memuat data kandidat.</p>`;
+    return;
+  }
+  kandidatData = data|| [];  // Simpan data kandidat ke variabel global
+  container.innerHTML = data.map(k => `
+    <div class="edit-bg rounded-2xl card-shadow p-6 vote-card animate-fade-in">
+      <div class="text-center mb-6">
+        <div class="borrder w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden">
+          <img src="${k.foto_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4='}" alt="${k.nama}" class="w-full h-full object-cover" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4='">
+        </div>
+        <h3 class="text-xl font-bold text-white">${k.nama}</h3>
+        <p class="text-white font-semibold">Calon No. ${k.No}</p>  <!-- Tambahkan nomor kandidat -->
+        <p class="text-white text-sm mt-2">${k.visi}</p>
+      </div>
+      <button onclick="vote(${k.No})"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
+        Pilih Calon Ini
+      </button>
+    </div>
+  `).join("");
+}
+// ====================
+// TAMPILKAN KANDIDAT DARI SUPABASE
+// ====================
+document.addEventListener("DOMContentLoaded", loadKandidat);
+
+
+// panggil fungsi ini setelah login berhasil
+
 
 // ====================
 // INISIALISASI
