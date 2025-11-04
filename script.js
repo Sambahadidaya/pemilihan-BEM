@@ -298,7 +298,8 @@ async function loadKandidat() {
         </div>
         <h3 class="text-xl font-bold text-white">${k.nama}</h3>
         <p class="text-white font-semibold">Calon No. ${k.No}</p>  <!-- Tambahkan nomor kandidat -->
-        <p class="text-white text-sm mt-2">${k.visi}</p>
+        <p class="text-white text-sm mt-2">Visi: ${k.visi}</p>
+        <p class="text-white text-sm mt-2">Misi: ${k.misi}</p>
       </div>
       <button onclick="vote(${k.No})"
         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
@@ -321,3 +322,4 @@ document.addEventListener("DOMContentLoaded", loadKandidat);
 // ====================
 updateResults();
 showPage("loginForm");
+
