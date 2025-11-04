@@ -21,18 +21,16 @@
     }
 
     .gradient-bg {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(140deg, #402A1C 50%, #F0C785 100%);
     }
 
     p {
-      color: rgb(0, 0, 0);
+      color: rgb(255, 255, 255);
     }
 
-    h2 {
-      color: rgb(0, 0, 0);
+    h1 {
+      color: rgb(255, 255, 255);
     }
-
-
 
     .card-shadow {
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -93,7 +91,7 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
-    
+
     .edit-bg {
       background-color: rgba(255, 255, 255, 0.192);
       border: 2px solid #c7c7c7;
@@ -161,6 +159,10 @@
       font-size: 1.5rem;
       line-height: 57px;
     }
+
+    .borrder {
+      border: #ffffff 2px solid;
+    }
   </style>
 </head>
 
@@ -177,21 +179,21 @@
         <div class="edit-input">
           <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
           <input type="text" id="nama" required
-          class="w-full text-sm font-medium text-black-300 px-4 py-3 border border-black-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            class="w-full text-sm font-medium text-black-300 px-4 py-3 border border-black-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
           <label for="nama" class=" text-sm font-medium text-black-700 mb-2">Nama Lengkap</label>
         </div>
 
         <div class="edit-input">
           <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
-          <input type="text" id="nim"  required
-          class="w-full text-sm font-medium text-black-300 px-4 py-3 border border-black-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+          <input type="text" id="nim" required
+            class="w-full text-sm font-medium text-black-300 px-4 py-3 border border-black-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
           <label for="nim" class="block text-sm font-medium text-black-700 mb-2">NIM</label>
         </div>
 
         <div class="edit-input">
           <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
           <input type="password" id="password" required
-          class="w-full text-sm font-medium text-black-300 px-4 py-3 border border-black-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            class="w-full text-sm font-medium text-black-300 px-4 py-3 border border-black-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
           <label for="password" class="block text-sm font-medium text-black-700 mb-2">Password</label>
         </div>
 
@@ -221,107 +223,9 @@
     </header>
 
     <main class="max-w-6xl mx-auto">
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Candidate 1 -->
-        <div class="bg-white rounded-2xl card-shadow p-6 vote-card animate-fade-in">
-          <div class="text-center mb-6">
-            <div
-              class="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center">
-              <span class="text-4xl text-white font-bold">AR</span>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800">Ahmad Rizki</h3>
-            <p class="text-gray-600">Calon No. 1</p>
-          </div>
-
-          <div class="space-y-3 mb-6">
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-              Meningkatkan fasilitas kampus
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-              Program beasiswa mahasiswa
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-              Kegiatan ekstrakurikuler
-            </div>
-          </div>
-
-          <button onclick="vote(1)" id="voteBtn1"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-            <span class="spinner hidden"></span>
-            Pilih Calon Ini
-          </button>
-        </div>
-
-        <!-- Candidate 2 -->
-        <div class="bg-white rounded-2xl card-shadow p-6 vote-card animate-fade-in">
-          <div class="text-center mb-6">
-            <div
-              class="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
-              <span class="text-4xl text-white font-bold">SP</span>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800">Sari Putri</h3>
-            <p class="text-gray-600">Calon No. 2</p>
-          </div>
-
-          <div class="space-y-3 mb-6">
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Digitalisasi layanan mahasiswa
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Program magang industri
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              Kewirausahaan mahasiswa
-            </div>
-          </div>
-
-          <button onclick="vote(2)" id="voteBtn2"
-            class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-            <span class="spinner hidden"></span>
-            Pilih Calon Ini
-          </button>
-        </div>
-
-        <!-- Candidate 3 -->
-        <div class="bg-white rounded-2xl card-shadow p-6 vote-card animate-fade-in">
-          <div class="text-center mb-6">
-            <div
-              class="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center">
-              <span class="text-4xl text-white font-bold">DM</span>
-            </div>
-            <h3 class="text-xl font-bold text-gray-800">Doni Mahendra</h3>
-            <p class="text-gray-600">Calon No. 3</p>
-          </div>
-
-          <div class="space-y-3 mb-6">
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-              Kesejahteraan mahasiswa
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-              Organisasi kemahasiswaan
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-              Kompetisi akademik
-            </div>
-          </div>
-
-          <button onclick="vote(3)" id="voteBtn3"
-            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-            <span class="spinner hidden"></span>
-            Pilih Calon Ini
-          </button>
-        </div>
-      </div>
+      <div id="kandidatList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
+
   </div>
 
   <!-- Vote Confirmation -->
@@ -334,7 +238,7 @@
       </div>
 
       <h2 class="text-2xl font-bold text-gray-800 mb-4">Suara Berhasil Disimpan!</h2>
-      <p class="text-gray-600 mb-6">Terima kasih telah berpartisipasi dalam pemilihan gubernur mahasiswa.</p>
+      <p class="text-gray-600 mb-6">Terima kasih telah berpartisipasi dalam pemilihan presiden mahasiswa.</p>
       <p class="text-sm text-gray-500 mb-8">Anda telah memilih: <span id="selectedCandidate"
           class="font-semibold"></span></p>
 
@@ -382,93 +286,16 @@
         </div>
 
         <div class="space-y-6">
-          <!-- Candidate 1 Results -->
-          <div class="border border-gray-200 rounded-lg p-6">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center">
-                <div
-                  class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-4">
-                  <span class="text-lg text-white font-bold">AR</span>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-800">Ahmad Rizki</h3>
-                  <p class="text-sm text-gray-600">Calon No. 1</p>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="text-2xl font-bold text-blue-600" id="votes1">0</div>
-                <div class="text-sm text-gray-600" id="percentage1">0%</div>
-              </div>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-3">
-              <div class="bg-blue-600 h-3 rounded-full progress-bar" id="progress1" style="width: 0%">
-              </div>
-            </div>
-          </div>
-
-          <!-- Candidate 2 Results -->
-          <div class="border border-gray-200 rounded-lg p-6">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center">
-                <div
-                  class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mr-4">
-                  <span class="text-lg text-white font-bold">SP</span>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-800">Sari Putri</h3>
-                  <p class="text-sm text-gray-600">Calon No. 2</p>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="text-2xl font-bold text-green-600" id="votes2">0</div>
-                <div class="text-sm text-gray-600" id="percentage2">0%</div>
-              </div>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-3">
-              <div class="bg-green-600 h-3 rounded-full progress-bar" id="progress2" style="width: 0%">
-              </div>
-            </div>
-          </div>
-
-          <!-- Candidate 3 Results -->
-          <div class="border border-gray-200 rounded-lg p-6">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center">
-                <div
-                  class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mr-4">
-                  <span class="text-lg text-white font-bold">DM</span>
-                </div>
-                <div>
-                  <h3 class="font-bold text-gray-800">Doni Mahendra</h3>
-                  <p class="text-sm text-gray-600">Calon No. 3</p>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="text-2xl font-bold text-purple-600" id="votes3">0</div>
-                <div class="text-sm text-gray-600" id="percentage3">0%</div>
-              </div>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-3">
-              <div class="bg-purple-600 h-3 rounded-full progress-bar" id="progress3" style="width: 0%">
-              </div>
-            </div>
+          <div id="resultsContainer">
+            <!-- Akan diisi dinamis -->
           </div>
         </div>
-
-        <div class="mt-8 text-center">
-          <button onclick="updateResults()" id="refreshBtn"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
-            <span class="spinner hidden"></span>
-            Refresh Hasil
-          </button>
-        </div>
-      </div>
     </main>
   </div>
 
-  <script src="script.js"></script>
+  <script src="/versi5/backend/script.js"></script>
   <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'98faf6674423aa11',t:'MTc2MDY1MzQyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
-  <script>    function redirectCU(e) {
+  <!-- <script>    function redirectCU(e) {
       if (e.ctrlKey && e.which == 85) {
         window.location.replace("403.html");
         return false;
@@ -484,11 +311,10 @@
       }
     }
     document.oncontextmenu = redirectKK;
-    //]]></script>
+    //]]></script> -->
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
 </body>
 
 </html>
-
